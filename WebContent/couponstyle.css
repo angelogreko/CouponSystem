@@ -1,0 +1,69 @@
+@CHARSET "ISO-8859-1";
+
+table {
+	width: 100%;
+	border: 0px;
+}
+
+#loginForm{
+	margin: 3px;
+	padding: 3px;
+	font-style: italic;
+	font-family: cursive;
+}
+.logout {
+	color: red;
+}
+
+.header {
+	max-height: 90px;
+	display: block;
+}
+
+#leftheader {
+	background-color: powderblue;
+	font-size: x-large;
+	margin: 3px;
+	padding: 3px;
+}
+
+#rightheader {
+	background-color: #ffffcc;
+	border-bottom: 1px solid green;
+}
+
+#rowmain {
+	height: 800px;
+	background-color: #ffffcc;
+	vertical-align: top;
+}
+
+.sidemenu {
+	background-color: powderblue;
+	width: 15%;
+	border-spacing: 20px;
+}
+
+#footer {
+	height: 30px;
+	background-color: #ffffcc;
+	border-top: 1px solid green;
+}
+
+.submit {
+	display: marker;
+	padding: 10px;
+	font-family: cursive;
+}
+
+#sidemenuheader {
+	font-style: italic;
+	font-family: cursive;
+	font-size: xx-large;
+}
+
+#sidemenutitle {
+	font-style: italic;
+	font-family: cursive;
+	font-size: x-large;
+}

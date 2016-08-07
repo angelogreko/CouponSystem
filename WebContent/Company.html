@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>GreCoupons</title>
+</head>
+<body>
+<div class="Global">
+		<header class="Header">
+			<div class="WebSize">
+				<div class="Logo">
+					<img src="Images/GreCoupons.png" width="750" height="75"
+						border="0">
+				</div>
+			</div>
+		</header>
+		<hr>
+	</div>
+	<form id="companyForm" class="company">
+		<h1>Company</h1>
+		<p>
+			<select name="coupType" style="height: 30px" style="width: 170px;">
+				<option selected disabled>Choose</option>
+				<option value="admin">Existing Coupons</option>
+				<option value="admin">Create Coupon</option>
+			</select>
+		</p>
+		<p class="submit">
+			<input id="btnTypeChoose" type="button" value="Submit"
+				onclick="submit(this)">
+		</p>
+		
+		<br>
+		<br>
+		
+		<p>
+			<select name="couponType" style="height: 30px" style="width: 170px;">
+				<option selected disabled>Coupon Type</option>
+				<option value="admin">RESTAURANTS</option>
+				<option value="admin">ELECTRICITY</option>
+				<option value="admin">FOOD</option>
+				<option value="admin">HEALTH</option>
+				<option value="admin">SPORTS</option>
+				<option value="admin">CAMPING</option>
+				<option value="admin">TRAVELLING</option>
+			</select>
+		</p>
+		
+		<p class="submit">
+			<input id="btnTypeChoose" type="button" value="Submit"
+				onclick="submit(this)">
+		</p>
+	</form>
+	<br>
+	<br>
+	
+	<div>
+			<table border="1">
+				<thead><tr><td>Coupon</td>
+						<td>ID</td>
+						<td>Start Date</td>
+						<td>End Date</td>
+						<td>Amount</td>
+						<td>Type</td>
+						<td>Message</td>
+						<td>Price</td>
+						<td>Image</td>
+						<td>
+						<input type="button" onclick="RemoveButton()" value="Delete"/>
+						<input type="button" onclick="UpdateButton()" value="Update"/>
+						</td>
+					</tr>
+				</thead>
+				<tbody id="tableCoupon"></tbody>
+			</table>
+		</div>
+		<br>
+		<br>
+		
+		
+		
+		
+		<form id="addcoupForm" class="addcoup">
+<h1>Create Coupon</h1>
+<p>
+			<input type="text" name="title" value="" placeholder="Title">
+		</p>
+		<p>
+			<input type="date" name="startDate" value=""
+				placeholder="Start Date">
+		</p>
+		<p>
+			<input type="date" name="endDate" value=""
+				placeholder="End Date">
+		</p>
+		<p>
+			<input type="number" name="amount" value=""
+				placeholder="Amount">
+		</p>
+		
+		<p>
+			<select name="couponType" style="height: 30px" style="width: 170px;">
+				<option selected disabled>Coupon Type</option>
+				<option value="admin">RESTAURANTS</option>
+				<option value="admin">ELECTRICITY</option>
+				<option value="admin">FOOD</option>
+				<option value="admin">HEALTH</option>
+				<option value="admin">SPORTS</option>
+				<option value="admin">CAMPING</option>
+				<option value="admin">TRAVELLING</option>
+			</select>
+		</p>
+		<p>
+			<input type="text" name="message" value="" placeholder="Message">
+		</p>
+		<p>
+			<input type="number" name="price" value=""
+				placeholder="Price">
+		</p>
+		<p>
+			<input type="file" name="image" value="" placeholder="Image">
+		</p>
+			<p class="submit">
+			<input id="btncreatecoup" type="button" value="Create"
+				onclick="create(this)">
+		</p>
+		
+		</form>
+		
+	</body>
+
+
+
+</body>
+</html>
