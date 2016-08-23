@@ -14,7 +14,7 @@ import com.angelo.coupons.exceptions.CouponSystemException;
 
 public interface CustomerDAO {
 
-	public void createCustomer(Customer customer) throws CouponSystemException;
+	public Customer createCustomer(Customer customer) throws CouponSystemException;
 
 	public void removeCustomer(Customer customer) throws CouponSystemException;
 

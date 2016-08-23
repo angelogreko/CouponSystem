@@ -14,7 +14,7 @@ import com.angelo.coupons.exceptions.CouponSystemException;
 
 public interface CompanyDAO {
 
-	public void createCompany(Company company) throws CouponSystemException;
+	public Company createCompany(Company company) throws CouponSystemException;
 
 	public void removeCompany(Company company) throws CouponSystemException;
 

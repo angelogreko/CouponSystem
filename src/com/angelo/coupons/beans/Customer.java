@@ -1,7 +1,12 @@
 package com.angelo.coupons.beans;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+
+@XmlRootElement
 /*
  * Customer Bean Class 
  * Including constructors, to string, getters and setters
@@ -9,19 +14,25 @@ import java.util.Collection;
 
 public class Customer {
 
-	private final long id;
+	private long id;
 	private String custName;
 	private String password;
 	private Collection<Coupon> coupons;
 
-	public Customer(long id, String custName, String password) {
-		this.id = id;
-		this.custName = custName;
-		this.password = password;
+	public Customer() {
+		coupons=new ArrayList<Coupon>();
 	}
 
 	public Customer(long id) {
 		this.id = id;
+		coupons=new ArrayList<Coupon>();
+	}
+	
+	public Customer(long id, String custName, String password) {
+		this.id = id;
+		this.custName = custName;
+		this.password = password;
+		coupons=new ArrayList<Coupon>();
 	}
 
 	public String getCustName() {
@@ -42,6 +53,10 @@ public class Customer {
 
 	public long getId() {
 		return id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public Collection<Coupon> getCoupons() {

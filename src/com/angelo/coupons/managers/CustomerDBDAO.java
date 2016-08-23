@@ -29,18 +29,31 @@ public class CustomerDBDAO implements CustomerDAO {
 	/**
 	 * Creating a new Customer & Checking for duplications in customer names
 	 * 
+	 * @return
+	 * 
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
 	@Override
-	public void createCustomer(Customer customer) throws CouponSystemException{
+	public Customer createCustomer(Customer customer) throws CouponSystemException {
 		String sql = "INSERT INTO customer (cust_name, password) VALUES ('" + customer.getCustName() + "','"
 				+ customer.getPassword() + "'); ";
+		Customer createdCustomer;
 		if (!CustomerNameExists(customer)) {
-			getUtilFunction.activateQuery(sql, true);
+			ResultSet result = getUtilFunction.activateQuery(sql, true);
+			try {
+				if (result.next()) {
+					createdCustomer = new Customer(result.getLong(1), customer.getCustName(), customer.getPassword());
+				} else {
+					throw new CouponSystemException("  Customer Create Failed");
+				}
+			} catch (SQLException e) {
+				throw new CouponSystemException("SQL DAO Exception... Function create Customer\n" + e.getMessage());
+			}
 		} else {
 			throw new CouponSystemException("SQL DAO Exception... Customer Name Exists\n");
 		}
+		return createdCustomer;
 	}
 
 	/**
@@ -50,7 +63,7 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	private boolean CustomerNameExists(Customer customer) throws CouponSystemException{
+	private boolean CustomerNameExists(Customer customer) throws CouponSystemException {
 		String sql = "select * from customer where cust_name='" + customer.getCustName() + "'";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 		try {
@@ -69,10 +82,10 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	@Override
-	public void removeCustomer(Customer customer) throws CouponSystemException{
+	public void removeCustomer(Customer customer) throws CouponSystemException {
 		String sqlCustCoup = "DELETE FROM customer_coupon WHERE cust_id=" + customer.getId();
 		String sqlCustomer = "DELETE FROM customer WHERE id=" + customer.getId();
-		if (customer.getCoupons().size() > 0) {
+		if (getCoupons(customer.getId()).size() > 0) {
 			getUtilFunction.activateQuery(sqlCustCoup, true);
 		}
 		getUtilFunction.activateQuery(sqlCustomer, true);
@@ -85,7 +98,7 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	@Override
-	public void updateCustomer(Customer customer) throws CouponSystemException{
+	public void updateCustomer(Customer customer) throws CouponSystemException {
 		String sql = "UPDATE customer SET password = '" + customer.getPassword() + "' WHERE id = " + customer.getId();
 		getUtilFunction.activateQuery(sql, true);
 	}
@@ -97,9 +110,11 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	@Override
-	public Customer getCustomer(long id) throws CouponSystemException{
+	public Customer getCustomer(long id) throws CouponSystemException {
 		Customer customer = null;
-		String sql = "select * from customer where id= " + id;
+		String sql = "SELECT customer.id cust_id ,cust_name,password,coupon.* " + "FROM customer "
+				+ "left join customer_coupon on customer.id=customer_coupon.cust_id "
+				+ "left join coupon on customer_coupon.coupon_id=coupon.id " + "where customer.id=" + id;
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 		try {
 			if (result.next()) {
@@ -118,9 +133,11 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	@Override
-	public Collection<Customer> getAllCustomers() throws CouponSystemException{
+	public Collection<Customer> getAllCustomers() throws CouponSystemException {
 		Collection<Customer> customerArray = new ArrayList<Customer>();
-		String sql = "select * from customer";
+		String sql = "SELECT customer.id cust_id ,cust_name,password,coupon.* " + "FROM customer "
+				+ "left join customer_coupon on customer.id=customer_coupon.cust_id "
+				+ "left join coupon on customer_coupon.coupon_id=coupon.id ";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 		try {
 			while (result.next()) {
@@ -128,7 +145,8 @@ public class CustomerDBDAO implements CustomerDAO {
 				customerArray.add(customer);
 			}
 		} catch (SQLException e) {
-			throw new CouponSystemException("Sql Exception **CustomerDBDAO\nFunction getAllCustomers()\n" + e.getMessage());
+			throw new CouponSystemException(
+					"Sql Exception **CustomerDBDAO\nFunction getAllCustomers()\n" + e.getMessage());
 		}
 		return customerArray;
 	}
@@ -140,13 +158,12 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	@Override
-	public Collection<Coupon> getCoupons(long id) throws CouponSystemException{
-		String sql = "select coupon.* from coupon " 
-				+ "join customer_coupon on coupon.id=customer_coupon.coupon_id "
+	public Collection<Coupon> getCoupons(long id) throws CouponSystemException {
+		String sql = "select coupon.* from coupon " + "join customer_coupon on coupon.id=customer_coupon.coupon_id "
 				+ "where customer_coupon.cust_id=" + id;
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
-		return getUtilFunction.setCouponCollectionByResult(result);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
 	/**
@@ -156,7 +173,7 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	@Override
-	public boolean login(String custName, String password) throws CouponSystemException{
+	public boolean login(String custName, String password) throws CouponSystemException {
 		Customer customer = getCustomer(custName, password);
 		if (customer != null)
 			return true;
@@ -166,30 +183,44 @@ public class CustomerDBDAO implements CustomerDAO {
 	/**
 	 * Purchased coupons of customer
 	 * 
+	 * @return
+	 * 
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	public void purchasedCoupon(Coupon coupon, long customerId) throws CouponSystemException{
-		String sql = "INSERT INTO customer_coupon(cust_id,coupon_id) VALUES(" + customerId + "," + coupon.getId()
-				+ ");";
-		String sqlcoup = "UPDATE coupon SET amount = "
-				+ (coupon.getAmount() - 1) + " WHERE id ="
-				+ coupon.getId();
+	public Coupon purchaseCoupon(Coupon coupon, long customerId) throws CouponSystemException {
 		long DAY_IN_MILISECONDS = 24 * 60 * 60 * 1000;
+		Coupon purchasedCoupon = null;
 		Date allDayOfToday = new Date(System.currentTimeMillis() - DAY_IN_MILISECONDS + 1000);
 		if (coupon.getEndDate().after(allDayOfToday)) {
 			if (!CustomerAlredyBoughtThisCoupon(coupon, customerId)) {
 				if (coupon.getAmount() > 0) {
-					getUtilFunction.activateQuery(sql, true);
-					getUtilFunction.activateQuery(sqlcoup, true);
+					ResultSet result = getUtilFunction
+							.activateQuery("INSERT INTO customer_coupon(cust_id,coupon_id) VALUES(" + customerId + ","
+									+ coupon.getId() + ");", true);
+					try {
+						if (result.next()) {
+							getUtilFunction.activateQuery("UPDATE coupon SET amount = " + (coupon.getAmount() - 1)
+									+ " WHERE id =" + coupon.getId(), true);
+							purchasedCoupon = new Coupon(result.getLong(1), coupon.getTitle(), coupon.getStartDate(),
+									coupon.getEndDate(), coupon.getAmount(), coupon.getType(), coupon.getMessage(),
+									coupon.getPrice(), coupon.getImage());
+						}
+					} catch (SQLException e) {
+						throw new CouponSystemException(
+								"Sql Exception **CustomerDBDAO\nFunction purchaseCoupon(Coupon coupon, long customerId)\n"
+										+ e.getMessage());
+					}
+
 				} else
-					throw new CouponSystemException("SQL DAO Exception... Coupon Amount Sold");
+					throw new CouponSystemException("Alert!!!  Coupon Amount Sold");
 			} else
-				throw new CouponSystemException("SQL DAO Exception... Customer Alredy Bought This Coupon");
+				throw new CouponSystemException("Alert!!!  This Customer Already Buy This Coupon");
 		} else
-			throw new CouponSystemException("SQL DAO Exception... Coupon Expired");
+			throw new CouponSystemException("Alert!!!  Coupon Expired");
+		return purchasedCoupon;
 	}
-	
+
 	/**
 	 * Checking if customer had bought a duplicate coupon
 	 * 
@@ -199,9 +230,8 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	
-	private boolean CustomerAlredyBoughtThisCoupon(Coupon coupon, long customerId)
-			throws CouponSystemException{
+
+	private boolean CustomerAlredyBoughtThisCoupon(Coupon coupon, long customerId) throws CouponSystemException {
 		String sql = "select * from customer_coupon where cust_id=" + customerId + " and coupon_id=" + coupon.getId();
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 		try {
@@ -222,9 +252,12 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	public Customer getCustomer(String custName, String password) throws CouponSystemException{
+	public Customer getCustomer(String custName, String password) throws CouponSystemException {
 		Customer customer = null;
-		String sql = "SELECT * FROM customer where cust_name='" + custName + "' and password='" + password + "';";
+		String sql = "SELECT customer.id cust_id ,cust_name,password,coupon.* " + "FROM customer "
+				+ "left join customer_coupon on customer.id=customer_coupon.cust_id "
+				+ "left join coupon on customer_coupon.coupon_id=coupon.id " + "where cust_name='" + custName
+				+ "' and password='" + password + "';";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 		try {
 			if (result.next()) {
@@ -244,14 +277,13 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	private Customer setCustomerByResult(ResultSet result) throws CouponSystemException{
+	private Customer setCustomerByResult(ResultSet result) throws CouponSystemException {
 		Customer customer = null;
 		try {
-			customer = new Customer(result.getLong("id"), 
-					result.getString("cust_name"), 
+			customer = new Customer(result.getLong("cust_id"), result.getString("cust_name"),
 					result.getString("password"));
-			Collection<Coupon> couponArray = getCoupons(result.getLong("id"));
-			customer.setCoupons(couponArray);
+			customer.setCoupons(
+					getUtilFunction.setCouponCollectionByResult(result, "cust_id", result.getLong("cust_id")));
 		} catch (SQLException e) {
 			throw new CouponSystemException("SQL DAO Exception... Set Customer By Result\n" + e.getMessage());
 		}
@@ -268,13 +300,12 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	public Collection<Coupon> getAllPurchasedCouponByType(CouponType couponType, long customerId)
-			throws CouponSystemException{
-		String sql = "select coupon.* from coupon " 
-				+ "join customer_coupon on coupon.id=customer_coupon.coupon_id "
+			throws CouponSystemException {
+		String sql = "select coupon.* from coupon " + "join customer_coupon on coupon.id=customer_coupon.coupon_id "
 				+ "where customer_coupon.cust_id=" + customerId + " and coupon.type='" + couponType.name() + "'";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
-		return getUtilFunction.setCouponCollectionByResult(result);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
 	/**
@@ -287,12 +318,40 @@ public class CustomerDBDAO implements CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	public Collection<Coupon> getAllPurchasedCouponByPrice(double maxPrice, long customerId)
-			throws CouponSystemException{
-		String sql = "select coupon.* from coupon " 
-				+ "join customer_coupon on coupon.id=customer_coupon.coupon_id "
+			throws CouponSystemException {
+		String sql = "select coupon.* from coupon " + "join customer_coupon on coupon.id=customer_coupon.coupon_id "
 				+ "where customer_coupon.cust_id=" + customerId + " and coupon.price<" + maxPrice;
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
-		return getUtilFunction.setCouponCollectionByResult(result);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
+	public Collection<Coupon> getAvailableCoupons(long id) throws CouponSystemException {
+		String sql = "select * from coupon " + "where amount > 0 " + "and id not in " + "(SELECT coupon.id FROM coupon "
+				+ "join customer_coupon on customer_coupon.coupon_id=coupon.id " + "where customer_coupon.cust_id=" + id
+				+ ")";
+		ResultSet result = getUtilFunction.activateQuery(sql, false);
+
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
+	}
+
+	public Collection<Coupon> getAvailableCouponsByPrice(double maxPrice, long customerId)
+			throws CouponSystemException {
+		String sql = "select * from coupon " + "where amount > 0 " + " and coupon.price<" + maxPrice + " and id not in "
+				+ "(SELECT coupon.id FROM coupon " + "join customer_coupon on customer_coupon.coupon_id=coupon.id "
+				+ "where customer_coupon.cust_id=" + customerId + ")";
+		ResultSet result = getUtilFunction.activateQuery(sql, false);
+
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
+	}
+
+	public Collection<Coupon> getAvailableCouponsByType(CouponType couponType, long customerId)
+			throws CouponSystemException {
+		String sql = "select * from coupon " + "where amount > 0 " + " and type='" + couponType.name()
+				+ "' and id not in " + "(SELECT coupon.id FROM coupon "
+				+ "join customer_coupon on customer_coupon.coupon_id=coupon.id " + "where customer_coupon.cust_id="
+				+ customerId + ")";
+		ResultSet result = getUtilFunction.activateQuery(sql, false);
+
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
+	}
 }

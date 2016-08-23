@@ -1,6 +1,11 @@
 package com.angelo.coupons.beans;
 
+import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 
 /*
  * Company Bean Class 
@@ -9,14 +14,19 @@ import java.util.Collection;
 
 public class Company {
 
-	private final long id;
+	private long id;
 	private String compName;
 	private String password;
 	private String email;
 	private Collection<Coupon> coupons;
 
+	public Company() {
+		coupons = new ArrayList<Coupon>();
+	}
+	
 	public Company(long id) {
 		this.id = id;
+		coupons=new ArrayList<Coupon>();
 	}
 
 	public Company(long id, String compName, String password, String email) {
@@ -24,6 +34,7 @@ public class Company {
 		this.compName = compName;
 		this.password = password;
 		this.email = email;
+		coupons=new ArrayList<Coupon>();
 	}
 
 	public Collection<Coupon> getCoupons() {
@@ -60,6 +71,10 @@ public class Company {
 
 	public long getId() {
 		return id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	@Override

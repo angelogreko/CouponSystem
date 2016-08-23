@@ -2,15 +2,19 @@ package com.angelo.coupons.beans;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.angelo.coupons.enums.CouponType;
 
+
+@XmlRootElement
 /*
  * Coupon Bean Class 
  * Including constructors,to string, getters and setters
  */
 
 public class Coupon {
-	private final long id;
+	private long id;
 	private String title;
 	private Date startDate;
 	private Date endDate;
@@ -20,6 +24,9 @@ public class Coupon {
 	private double price;
 	private String image;
 
+	public Coupon(){
+	}
+	
 	public Coupon(long id) {
 		this.id = id;
 	}
@@ -103,6 +110,10 @@ public class Coupon {
 
 	public long getId() {
 		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	@Override

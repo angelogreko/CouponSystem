@@ -1,18 +1,57 @@
-@CHARSET "ISO-8859-1";
+@CHARSET "utf-8";
 
-table {
+table{
 	width: 100%;
-	border: 0px;
+	border: hidden;
 }
 
-#loginForm{
+
+#sidemenu input[type=button]:HOVER {
+	background-color: white;
+	color: #4c95af;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 10px
+		rgba(0, 0, 0, 0.24);
+}
+
+.detailsTable th,.detailsTable td{
+	text-align: left;
+	font-style: italic;
+	font-family: cursive;
+	color: #4c95af;
+}
+
+#sidemenu input[type=button] {
+	background-color: #4c95af;
+	color: white;
+	text-align: center;
+	width: 260px;
+	border: none;
+	padding: 11px;
+}
+.maintable input[type=button]{
+	background-color: #4c95af;
+	color: white;
+	text-align: center;
+	width: 50px;
+	border: none;
+	padding: 3px;
+	
+}
+input, select {
+	margin: 7px;
+	padding:7px 15px;
+	text-decoration: none;
+	text-decoration: none;
+	font-size: 16px;
+	font-family: cursive;
+	min-width: 200px;
+}
+
+.loginForm {
 	margin: 3px;
 	padding: 3px;
 	font-style: italic;
 	font-family: cursive;
-}
-.logout {
-	color: red;
 }
 
 .header {
@@ -20,7 +59,7 @@ table {
 	display: block;
 }
 
-#leftheader {
+.leftheader {
 	background-color: powderblue;
 	font-size: x-large;
 	margin: 3px;
@@ -29,7 +68,6 @@ table {
 
 #rightheader {
 	background-color: #ffffcc;
-	border-bottom: 1px solid green;
 }
 
 #rowmain {
@@ -45,9 +83,11 @@ table {
 }
 
 #footer {
-	height: 30px;
+	height: 35px;
 	background-color: #ffffcc;
 	border-top: 1px solid green;
+	font-style: italic;
+	font-family: cursive;
 }
 
 .submit {
@@ -57,6 +97,7 @@ table {
 }
 
 #sidemenuheader {
+	
 	font-style: italic;
 	font-family: cursive;
 	font-size: xx-large;
@@ -67,3 +108,50 @@ table {
 	font-family: cursive;
 	font-size: x-large;
 }
+.coupon{
+	float: left;
+	position: relative;
+	margin: 13px;
+}
+.center{padding: 0 200px;
+}
+
+.imagetext{
+	width: 550px;
+	font-style: italic;
+	font-family: cursive;
+	font-size: large;
+}
+
+.section-title{
+	font-style: italic;
+	font-family: cursive;
+	color: #4c95af
+}
+
+.header-text{
+	font-style: italic;
+	font-family: cursive;
+	color: #4c95af
+}
+
+#statdiv{
+	color: red;
+}
+
+
+#signout{
+	float: right;
+	display: inline;
+	vertical-align: top
+	font-style: italic;
+	font-family: cursive;
+	color: #4c95af
+}
+
+.tableheader{
+	font-style: italic;
+	font-family: cursive;
+	color: #4c95af
+}
+

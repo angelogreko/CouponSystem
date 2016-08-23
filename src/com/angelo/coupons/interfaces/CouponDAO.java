@@ -15,7 +15,7 @@ import com.angelo.coupons.exceptions.CouponSystemException;
 
 public interface CouponDAO {
 
-	public void createCoupon(Coupon coupon, Company company) throws CouponSystemException;
+	public Coupon createCoupon(Coupon coupon, Company company) throws CouponSystemException;
 
 	public void removeCoupon(Coupon coupon) throws CouponSystemException;
 

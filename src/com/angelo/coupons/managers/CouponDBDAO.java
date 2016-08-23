@@ -3,6 +3,7 @@ package com.angelo.coupons.managers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 
 import com.angelo.coupons.beans.Company;
 import com.angelo.coupons.beans.Coupon;
@@ -32,15 +33,16 @@ public class CouponDBDAO implements CouponDAO {
 	 * @throws CouponSystemException
 	 */
 	@Override
-	public void createCoupon(Coupon coupon, Company company) throws CouponSystemException{
+	public Coupon createCoupon(Coupon coupon, Company company) throws CouponSystemException{
+		Coupon createdCoupon;
 		if (!CouponTitleExists(coupon)) {
-			java.sql.Date startDate = new java.sql.Date(coupon.getStartDate().getTime());
-			java.sql.Date endDate = new java.sql.Date(coupon.getEndDate().getTime());
-			if (startDate.before(endDate) || startDate.equals(endDate)) {
+			java.sql.Date start_date = new java.sql.Date(coupon.getStartDate().getTime());
+			java.sql.Date end_date = new java.sql.Date(coupon.getEndDate().getTime());
+			if (start_date.before(end_date) || start_date.equals(end_date)) {
 				String sql = "INSERT INTO coupon(title,start_date,end_date,amount,type,message,price,image)VALUES('"
 						+ coupon.getTitle()	+ "','"
-						+ startDate + "','"
-						+ endDate 	+ "',"
+						+ coupon.getEndDate() + "','"
+						+ coupon.getEndDate() 	+ "',"
 						+ coupon.getAmount()+ ",'"
 						+ coupon.getType() + "','"
 						+ coupon.getMessage() + "',"
@@ -52,6 +54,11 @@ public class CouponDBDAO implements CouponDAO {
 						String sqlCompCoup = "INSERT INTO company_coupon(comp_id,coupon_id) " + "VALUES("
 								+ company.getId() + "," + result.getLong(1) + ");";
 						getUtilFunction.activateQuery(sqlCompCoup, true);
+						createdCoupon = new Coupon(result.getLong(1),
+								coupon.getTitle(), coupon.getStartDate(),
+								coupon.getEndDate(), coupon.getAmount(),
+								coupon.getType(), coupon.getMessage(),
+								coupon.getPrice(), coupon.getImage());
 					} else {
 						throw new CouponSystemException("SQL DAO Exception... Creating Coupon Failed");
 					}
@@ -64,7 +71,7 @@ public class CouponDBDAO implements CouponDAO {
 		} else {
 			throw new CouponSystemException("SQL DAO Exception... Coupon Title Exists");
 		}
-
+		return createdCoupon;
 	}
 
 	/**
@@ -115,7 +122,9 @@ public class CouponDBDAO implements CouponDAO {
 	public void updateCoupon(Coupon coupon) throws CouponSystemException{
 		java.sql.Date endDate = new java.sql.Date(coupon.getEndDate().getTime());
 		String sql = "UPDATE coupon SET end_date = '"
-				+ endDate + "',price = " + coupon.getPrice() + " WHERE id ="
+				+ endDate + "',price = " 
+				+ coupon.getPrice() 
+				+ " WHERE id ="
 				+ coupon.getId();
 		getUtilFunction.activateQuery(sql, true);
 	}
@@ -157,7 +166,7 @@ public class CouponDBDAO implements CouponDAO {
 		String sql = "select * from coupon";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
-		return getUtilFunction.setCouponCollectionByResult(result);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
 	/**
@@ -173,7 +182,7 @@ public class CouponDBDAO implements CouponDAO {
 		String sql = "select * from coupon where type='" + couponType + "'";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
-		return getUtilFunction.setCouponCollectionByResult(result);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
 	/**
@@ -183,8 +192,8 @@ public class CouponDBDAO implements CouponDAO {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	public void removeExpiredCoupon(java.util.Date date) throws CouponSystemException{
-		java.sql.Date yesterday = new java.sql.Date(date.getTime());
+	public void removeExpiredCoupon(Date expirationDate) throws CouponSystemException{
+		java.sql.Date yesterday = new java.sql.Date(expirationDate.getTime());
 		String sql = "select * from coupon where end_date < '" + yesterday + "';";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 		try {

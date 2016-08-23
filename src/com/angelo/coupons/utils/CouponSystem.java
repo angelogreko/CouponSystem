@@ -57,34 +57,39 @@ public class CouponSystem {
 	 * @throws CouponSystemException
 	 */
 	public CouponClientFacade login(String name, String password,
-			ClientType clientType) throws CouponSystemException{
+			ClientType clientType) throws CouponSystemException {
+		CouponClientFacade clientFacade = null;
 		switch (clientType) {
 		case ADMIN:
-			if (name == "admin" && password == "1234")
-				return (CouponClientFacade) new AdminFacade();
+			if (name.equals("admin") && password.equals("1234"))
+				clientFacade = (CouponClientFacade) new AdminFacade();
 			else
 				throw new CouponSystemException("User Not Found Exception: "
 						+ clientType + ": name=" + name + ", password="
 						+ password);
+			break;
 		case COMPANY:
 			CompanyDBDAO companyDBDAO = new CompanyDBDAO();
 			if (companyDBDAO.login(name, password))
-				return (CouponClientFacade) new CompanyFacade(name, password); 
+				clientFacade = (CouponClientFacade) new CompanyFacade(companyDBDAO.getCompany(name, password));
 			else
 				throw new CouponSystemException("User Not Found Exception: "
 						+ clientType + ": name=" + name + ", password="
 						+ password);
+			break;
 		case CUSTOMER:
 			CustomerDBDAO customerDBDAO = new CustomerDBDAO();
 			if (customerDBDAO.login(name, password))
-				return (CouponClientFacade) new CustomerFacade(name, password);
+				clientFacade = (CouponClientFacade) new CustomerFacade(customerDBDAO.getCustomer(name, password));
 			else
 				throw new CouponSystemException("User Not Found Exception: "
 						+ clientType + ": name=" + name + ", password="
 						+ password);
+			break;
 		default:
-			throw new CouponSystemException("Wrong clientType");
+			throw new CouponSystemException("Rong clientType");
 		}
+		return clientFacade;
 	}
 
 	/**
@@ -94,6 +99,7 @@ public class CouponSystem {
 	 */
 	public void shutDown() throws CouponSystemException {
 		couponExpiritionTask.stopTask();
+		thread.interrupt();
 		pool.closeAllConnections();
 	}
 }

@@ -18,26 +18,28 @@ import com.angelo.coupons.managers.CouponDBDAO;
 
 public class CompanyFacade implements CouponClientFacade {
 
-	CouponDBDAO couponDBDAO;
-	CompanyDBDAO companyDBDAO;
+	private CouponDBDAO couponDBDAO;
+	private CompanyDBDAO companyDBDAO;
 	public Company company;
 
-	public CompanyFacade(String name, String password) throws CouponSystemException{
+	public CompanyFacade(Company company) throws CouponSystemException{
 		couponDBDAO = new CouponDBDAO();
 		companyDBDAO = new CompanyDBDAO();
-		this.company = companyDBDAO.getCompany(name, password);
+		this.company = company;
 	}
 
 	/**
 	 * Creating a new Coupon Checking for duplications in coupon titles Checking
 	 * for improper dates
+	 * @return 
 	 * 
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	public void createCoupon(Coupon coupon) throws CouponSystemException{
-		couponDBDAO.createCoupon(coupon, company);
+	public Coupon createCoupon(Coupon coupon) throws CouponSystemException{
+		Coupon createdCoupon = couponDBDAO.createCoupon(coupon, company);
 		company.setCoupons(companyDBDAO.getCoupons(company.getId()));
+		return createdCoupon;
 	}
 
 	/**

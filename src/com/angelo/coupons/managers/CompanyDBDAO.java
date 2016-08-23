@@ -31,18 +31,35 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * Creating a new Company & Checking for duplications in company names.
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	@Override
-	public void createCompany(Company company) throws CouponSystemException{
-		String sql = "INSERT INTO company (comp_name, password,email) VALUES ( '" + company.getCompName() + "', " + "'"
-				+ company.getPassword() + "', '" + company.getEmail() + "' );";
+	public Company createCompany(Company company) throws CouponSystemException{
+		System.out.println(company);
+		String sql = "INSERT INTO company (comp_name,password,email) VALUES ('"
+				+ company.getCompName() + "', '"
+				+ company.getPassword() + "', '"
+				+ company.getEmail() + "'); ";
+		Company createdCompany = null;
 		if (!CheckName(company)) {
-			getUtilFunction.activateQuery(sql, true);
+			ResultSet resultSet = getUtilFunction.activateQuery(sql, true);
+			try {
+				if (resultSet.next()) {
+					createdCompany = new Company(resultSet.getLong(1),
+							company.getCompName(), company.getPassword(),
+							company.getEmail());
+				} else {
+					throw new CouponSystemException("Creating Company Failed");
+				}
+			} catch (SQLException e) {
+				throw new CouponSystemException(
+						"Sql Exception **CompanyDBDAO create Company\n"	+ e.getMessage());
+			}
 		} else {
-			throw new CouponSystemException("Company Name Exists!");
+			throw new CouponSystemException("Company Name Exists Alredy");
 		}
+		return createdCompany;
 	}
+			
 
 	/**
 	 * Checks the added Company Name existence in the Data Base.
@@ -51,7 +68,6 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * @return true if same name exists.
 	 * @throws CouponSystemException
 	 *             of Company Name Exists
-	 * @throws CouponSystemException
 	 */
 	public boolean CheckName(Company company) throws CouponSystemException{
 		String sqlCheckName = "select * from company where comp_name='" + company.getCompName() + "'";
@@ -71,11 +87,10 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * Base.
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	@Override
 	public void removeCompany(Company company) throws CouponSystemException{
-		Collection<Coupon> couponArray = company.getCoupons();
+		Collection<Coupon> couponArray = getCoupons(company.getId());
 		String inValues = "";
 		String sqlCompCoup = "DELETE FROM company_coupon WHERE comp_id=" + company.getId();
 		String sqlCustCoup = "DELETE FROM customer_coupon WHERE coupon_id in(" + inValues + ")";
@@ -99,12 +114,13 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * Updating data of a company
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	@Override
 	public void updateCompany(Company company) throws CouponSystemException{
-		String sql = "UPDATE company SET password = '" + company.getPassword() + "', email = '" + company.getEmail()
-				+ "' WHERE id = " + company.getId();
+		String sql = "UPDATE company SET password = '" 
+						+ company.getPassword() 
+						+ "', email = '" + company.getEmail()
+						+ "' WHERE id = " + company.getId();
 		getUtilFunction.activateQuery(sql, true);
 	}
 
@@ -112,12 +128,15 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * Getting a company by ID
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	@Override
 	public Company getCompany(long id) throws CouponSystemException{
 		Company company = null;
-		String sql = "select * from company where id=" + id;
+		String sql = "SELECT company.id comp_id,comp_name,password,email,coupon.* "
+					+ "FROM company "
+					+ "left join company_coupon on company.id=company_coupon.comp_id "
+					+ "left join coupon on company_coupon.coupon_id=coupon.id "
+					+ "where company.id=" + id;
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
 		try {
@@ -135,12 +154,14 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * Getting all companies in an Array
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	@Override
 	public Collection<Company> getAllCompanies() throws CouponSystemException{
 		Collection<Company> companyArray = new ArrayList<Company>();
-		String sql = "select * from company";
+		String sql = "SELECT company.id comp_id,comp_name,password,email,coupon.* "
+				+ "FROM company "
+				+ "left join company_coupon on company.id=company_coupon.comp_id "
+				+ "left join coupon on company_coupon.coupon_id=coupon.id ";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 		try {
 			while (result.next()) {
@@ -157,11 +178,15 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * Getting a company
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	public Company getCompany(String compName, String password) throws CouponSystemException{
 		Company company = null;
-		String sql = "SELECT * FROM company where comp_name='" + compName + "' and password='" + password + "';";
+		String sql = "SELECT company.id comp_id,comp_name,password,email,coupon.* "
+				+ "FROM company "
+				+ "left join company_coupon on company.id=company_coupon.comp_id "
+				+ "left join coupon on company_coupon.coupon_id=coupon.id "
+				+ "where comp_name='" + compName
+				+ "' and password='" + password + "';";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
 		try {
@@ -178,32 +203,30 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * Getting coupons by id
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	@Override
 	public Collection<Coupon> getCoupons(long id) throws CouponSystemException{
 		String sql = "select coupon.* " + "from coupon join company_coupon on coupon.id=company_coupon.coupon_id "
 				+ "where company_coupon.comp_id=" + id;
-		ResultSet resultSet = getUtilFunction.activateQuery(sql, false);
+		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
-		return getUtilFunction.setCouponCollectionByResult(resultSet);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
 	/**
 	 * Setting a company by result set
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	private Company setCompanyByResult(ResultSet result) throws CouponSystemException{
 		Company company = null;
 		try {
-			company = new Company(result.getLong("id"), 
+			company = new Company(result.getLong("comp_id"), 
 					result.getString("comp_name"), 
 					result.getString("password"),
 					result.getString("email"));
-			Collection<Coupon> couponArray = getCoupons(result.getLong("id"));
-			company.setCoupons(couponArray);
+			company.setCoupons(getUtilFunction.setCouponCollectionByResult(
+					result, "comp_id", result.getLong("comp_id")));
 		} catch (SQLException e) {
 			throw new CouponSystemException("SQL DAO Exception... Setting Company by result\n" + e.getMessage());
 		}
@@ -213,7 +236,6 @@ public class CompanyDBDAO implements CompanyDAO {
 	/**
 	 * Log in of a company
 	 * 
-	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
 	@Override
@@ -228,17 +250,16 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * Getting coupons by type
 	 * 
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	public Collection<Coupon> getCouponsByType(CouponType couponType, long companyId)
 			throws CouponSystemException{
 		String sql = "select coupon.* "
-				+ "from coupon join company_coupon on coupon.id=company_coupon.coupon_id "
-				+ "where company_coupon.comp_id=" + companyId
-				+ " and coupon.type='" + couponType.name() + "'";
+					+ "from coupon join company_coupon on coupon.id=company_coupon.coupon_id "
+					+ "where company_coupon.comp_id=" + companyId
+					+ " and coupon.type='" + couponType.name() + "'";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
-		return getUtilFunction.setCouponCollectionByResult(result);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
 	/**
@@ -246,14 +267,13 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * 
 	 * @param maxPrice
 	 * @throws CouponSystemException
-	 * @throws CouponSystemException
 	 */
 	public Collection<Coupon> getCouponsByPrice(double maxPrice, long companyId) throws CouponSystemException{
 		String sql = "select coupon.* " + "from coupon join company_coupon on coupon.id=company_coupon.coupon_id "
 				+ "where company_coupon.comp_id=" + companyId + " and coupon.price<" + maxPrice;
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
-		return getUtilFunction.setCouponCollectionByResult(result);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
 	/**
@@ -261,7 +281,6 @@ public class CompanyDBDAO implements CompanyDAO {
 	 * 
 	 * @param date
 	 * @param companyId
-	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
 	public Collection<Coupon> getCouponsByDate(Date date, long companyId) throws CouponSystemException{
@@ -272,7 +291,7 @@ public class CompanyDBDAO implements CompanyDAO {
 				+ " and coupon.end_date<'" + sqlDate+"'";
 		ResultSet result = getUtilFunction.activateQuery(sql, false);
 
-		return getUtilFunction.setCouponCollectionByResult(result);
+		return getUtilFunction.setCouponCollectionByResult(result, "id", 1L);
 	}
 
 }

@@ -16,8 +16,8 @@ import com.angelo.coupons.managers.CustomerDBDAO;
 
 public class AdminFacade implements CouponClientFacade {
 
-	public CompanyDBDAO companyDBDAO;
-	public CustomerDBDAO customerDBDAO;
+	private CompanyDBDAO companyDBDAO;
+	private CustomerDBDAO customerDBDAO;
 
 	public AdminFacade()throws CouponSystemException {
 		customerDBDAO = new CustomerDBDAO();
@@ -31,6 +31,7 @@ public class AdminFacade implements CouponClientFacade {
 	 * @throws CouponSystemException
 	 */
 	public void createCompany(Company company) throws CouponSystemException{
+		System.out.println(company);
 		companyDBDAO.createCompany(company);
 	}
 
@@ -43,6 +44,7 @@ public class AdminFacade implements CouponClientFacade {
 	 * @throws CouponSystemException
 	 */
 	public void removeCompany(Company company) throws CouponSystemException{
+		System.out.println("removing comp");
 		companyDBDAO.removeCompany(company);
 	}
 
@@ -74,6 +76,7 @@ public class AdminFacade implements CouponClientFacade {
 	 * @throws CouponSystemException
 	 */
 	public Collection<Company> getAllCompanies() throws CouponSystemException{
+		System.out.println("in admin facade");
 		return companyDBDAO.getAllCompanies();
 	}
 
@@ -83,8 +86,8 @@ public class AdminFacade implements CouponClientFacade {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	public void createCustomer(Customer customer) throws CouponSystemException{
-		customerDBDAO.createCustomer(customer);
+	public Customer createCustomer(Customer customer) throws CouponSystemException{
+		return customerDBDAO.createCustomer(customer);
 	}
 
 	/**

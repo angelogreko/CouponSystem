@@ -20,6 +20,14 @@ public class LoginService {
 
 	@Context
 	HttpServletRequest request;
+	
+	@GET
+	@Path("logout")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String logout() {
+		System.out.println("logout");
+		return "LoginService";
+	}
 
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
@@ -27,18 +35,33 @@ public class LoginService {
 		return "LoginService";
 	}
 
+	@SuppressWarnings("finally")
 	@POST
 	@Path("login")
-	@Produces(MediaType.APPLICATION_FORM_URLENCODED)
-	@Consumes(MediaType.TEXT_PLAIN)
-	public String login(@FormParam("name") String name, @FormParam("password") String password,
-			@FormParam("clientType") ClientType clientType) throws CouponSystemException {
-		CouponSystem couponSystem = CouponSystem.getInstance();
-		CouponClientFacade facade = couponSystem.login(name, password, clientType);
-		if (facade != null) {
-			request.getSession().setAttribute("facade", facade);
-			return "logedIn";
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public LoginClass login(@FormParam("name") String name, @FormParam("password") String password,
+			@FormParam("clientType") ClientType clientType) {
+		// System.out.println("in loginservice");
+		CouponSystem couponSystem;
+		CouponClientFacade facade = null;
+		LoginClass loginClass = new LoginClass();
+		try {
+			couponSystem = CouponSystem.getInstance();
+			facade = couponSystem.login(name, password, clientType);
+		} catch (CouponSystemException e) {
+			e.printStackTrace();
+		} finally {
+			if (facade != null) {
+				request.getSession().setAttribute("facade", facade);
+				loginClass.setName(name);
+				loginClass.setPassword(password);
+				loginClass.setClienType(clientType);
+			}
+			return loginClass;
 		}
-		return "notLogedIn";
 	}
+
+	
+
 }

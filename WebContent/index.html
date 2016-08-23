@@ -2,98 +2,522 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="couponstyle.css">
-<meta charset="ISO-8859-1">
+<meta charset="utf-8">
 <title>The Coupons App</title>
-
-<script type="text/javascript">
-	function login(btn) {
-		var formField = getFormField();
-		btn.disabled = true;
-		document.getElementById("statDiv").innerHTML = '<Loading>...</p>'
-		sendForm(formFields);
-	}
-
-	function sendForm(formFields) {
-		var AJAX = new XMLHttpRequest();
-		AJAX.responseType = "json";
-		AJAX.open("POST",
-				'http://localhost:8080/com.angelo.coupon/LoginServlet', true);
-		AJAX.setRequestHeader("Content-type",
-				"application/x-www-form-urlencoded");
-		AJAX.onreadystatechange = function() {
-			if (AJAX.readyState == 4) {
-				processResponse(AJAX.response);
-			}
-		};
-		AJAX.send(formFields);
-	}
-
-	function getFormFields() {
-		var formElements = document.getElementById('loginForm').elements;
-		var paramString = '';
-		alert(formElements.length);
-		for (var i = 0; i < formElements.length; i++) {
-			paramString += formElements[i].name + '=' + formElements[i].value
-					+ '&';
-		}
-		return paramString;
-
-	}
-
-	function processResponse(jsonObj) {
-		var ret = jsonObj.respCode;
-		if (ret == 'ok') {
-			document.getElementById("mainView").innerHTML = '<p>Welcome!</p>';
-		} else {
-			document.getElementById("submitBtn").disabled = false;
-			document.getElementById("statDiv").innerHTML = '<p><b>Login failed!</b></p>';
-		}
-	}
-</script>
+<script type="text/javascript" src="CouponAppScript.js"></script>
 
 </head>
 <body>
-	<table>
+	<table style="border-bottom-style: hidden;">
 		<tr id="header">
-			<td id="leftheader" class="Logo"><img src="Images/ACoupons.png"
+			<td class="leftheader"><img src="Images/ACoupons.png"
 				width="300" height="90" border="0"></td>
-			<td id="rightheader">
-				<h2 align="center" style="font-family: cursive;">You will not
-					miss any great discount never ever again!</h2>
-			</td>
+			<td id="rightheader"><a id="signout"
+				onclick="location.reload();" href="">Log Out</a>
+				<h1 class="header-text" align="center">You will not miss any
+					great discount never ever again!</h1></td>
 		</tr>
 		<tr id="rowmain">
 			<td id="sidemenu" class="sidemenu">
-				<form id="loginForm" class="login">
-					<h1>Login</h1>
-					<p>
-						<select name="clientType" style="width: 170px;">
-							<option selected disabled>Choose</option>
-							<option value="admin">Admin</option>
-							<option value="company">Company</option>
-							<option value="customer">Customer</option>
-						</select>
-					</p>
-					<p>
-						<input type="text" name="name" value="" placeholder="Name">
-					</p>
-					<p>
-						<input type="password" name="password" value=""
-							placeholder="Password">
-					</p>
-					<p class="submit">
-						<input id="login" type="button" value="Login"
-							onclick="login(this)">
-					</p>
-				</form>
+				<!-- *********************************************************** Side Menu Start***************************************** -->
+				<!-- ---------------------------login menu--------------------------------------------- -->
+				<div id="loginleft" style="display: block">
+					<form id="loginForm" class="loginForm">
+						<h1 align="center">LogIn</h1>
+						<p>
+							<select name="clientType">
+								<option selected disabled>Choose</option>
+								<option value="ADMIN">Administrator</option>
+								<option value="COMPANY">Company</option>
+								<option value="CUSTOMER">Customer</option>
+							</select>
+						</p>
+						<p>
+							<input type="text" name="name" value="" placeholder="Name">
+						</p>
+						<p>
+							<input type="password" name="password" value=""
+								placeholder="Password">
+						</p>
+						<input id="loginbtn" type="button" value="Login" onclick="logIn()">
+					</form>
+				</div> <!-- ---------------------------------------Administrator------------------------------- -->
+				<div id="adminleft" style="display: none">
+					<div id="sidemenuheader">
+						<a style="text-align: center;">Welcome</a> <br> <a>Administrator</a>
+					</div>
+					<br> <br>
+					<div id="sidemenutitle">
+						<a style="text-align: center;">Choose Action:</a>
+					</div>
+					<br> <br>
+					<div class="sidemenu">
+
+						<input id="btnexistingcomp" type="button"
+							value="Existing Companies" onclick="existingcomp()"> <input
+							id="btncreatecomp" type="button" value="Create Company"
+							onclick="showcreatecomp()"> <input id="btnexistingcust"
+							type="button" value="Existing Customers" onclick="existingcust()">
+						<input id="btncreatecust" type="button" value="Create Customer"
+							onclick="showcreatecust()">
+
+					</div>
+				</div> <!-- -----------------------------------------Company------------------------------------- -->
+				<div id="compleft" style="display: none">
+					<div id="sidemenuheader">
+						<a style="text-align: center;">Welcome</a> <br> <a
+							id="company_user_name">Company</a>
+					</div>
+					<br>
+					<div id="sidemenutitle">
+						<a style="text-align: center;">Choose Action:</a>
+					</div>
+					<br>
+					<div class="sidemenu">
+						<input id="btnexistingcoup" type="button" value="Existing Coupons"
+							onclick="existingcoup()"> <input id="btnexistingcouptype"
+							type="button" value="Existing Coupons By Type"
+							onclick="showgetCouponsByType()"> <input
+							id="btnexistingcoupprice" type="button"
+							value="Existing Coupons By Price"
+							onclick="showgetCouponsByPrice()"> <input
+							id="btnexistingcoupdate" type="button"
+							value="Existing Coupons By Date" onclick="showgetCouponsByDate()">
+						<input id="btncreatecoup" type="button" value="Create Coupon"
+							onclick="showcreateCoupon()">
+					</div>
+				</div> <!-- -----------------------------------------Customer------------------------------------- -->
+				<div id="custleft" style="display: none">
+					<div id="sidemenuheader">
+						<a style="text-align: center;">Welcome</a> <br> <a
+							id="customer_user_name">Customer</a>
+					</div>
+					<br>
+					<div id="sidemenutitle">
+						<a style="text-align: center;">Choose Action:</a>
+					</div>
+					<br>
+					<div class="sidemenu">
+
+						<input id="btnexistingcoup" type="button" value="Existing Coupons"
+							onclick="existingcoupcust()"> <input
+							id="btnexistingcouptype" type="button"
+							value="Existing Coupons By Type"
+							onclick="showgetCouponsByTypeCust()"> <input
+							id="btnexistingcoupprice" type="button"
+							value="Existing Coupons By Price"
+							onclick="showgetCouponsByPriceCust()"> <input
+							id="btnavailablecoup" type="button" value="All Available Coupons"
+							onclick="availableCoupons()"> <input
+							id="btnavailablecouptype" type="button"
+							value="Available Coupons By Type"
+							onclick="showAvailableCouponsByType()"> <input
+							id="btnavailablecoupprice" type="button"
+							value="Available Coupons By Price"
+							onclick="showAvailableCouponsByPrice()">
+
+					</div>
+				</div>
 			</td>
-			<td id="mainwindow">c</td>
+			<!-- ***************************************Side Menu End*************************** -->
+
+
+			<!-- ********************************************* Main Table Start*********************************************************** -->
+
+			<td id="mainwindow">
+				<div class="inner-table">
+
+					<!-- ********************************* Log In  *************************************************-->
+					<div id="loginCenter" class="center" style="display: block">
+
+						<div class="featured-products">
+							<h2 class="section-title" align="center">Weekly Featured
+								Deals</h2>
+						</div>
+						<div class="coupon">
+
+							<div>
+								<a><img width="560" height="370"
+									src="Images/dealRestaurant.jpg"> </a>
+							</div>
+							<div class="productinner">
+								<h3 class="imagetext">Vegan Restaurant Deal For Two (Up to
+									58% Off)</h3>
+								<h3 class="imagetext">Vegan Now!</h3>
+								<p class="imagetext">Tucked away in a Parisian-style
+									bensidoun market, Vegan Now! is a 100% soul food and 100% vegan
+									restaurant. The guiding philosophy is that food is the
+									foundation on which we create our world. So in order to make
+									the world a better place, they're making food better—everything
+									is 100% plant-based, with no chemical or animal products,
+									refined sugars, flour, or rice. Favorite dishes include the BBQ
+									jerk wings, cornbread, and kale.</p>
+							</div>
+						</div>
+
+						<div class="coupon">
+							<div class="second" align="right">
+								<a><img width="560" height="370" src="Images/dealHealth.jpg">
+								</a>
+							</div>
+							<div class="productinner">
+								<h3 class="imagetext">Individual Massage of Choice (Up to
+									49% Off)</h3>
+								<h3 class="imagetext">Savon Spa</h3>
+								<p class="imagetext">Savon Spa's Parisian theme speaks to
+									its Old-World luxury, whereas its emphasis on organic
+									ingredients in handmade soaps and lotions belies an utterly
+									modern eco-consciousness. Botanicals are even directly
+									incorporated into the French bamboo massage, in which a
+									therapist applies focused pressure with bamboo sticks and
+									organic oil to dissipate tension. The aestheticians perform
+									services using Organic Skin Care.</p>
+							</div>
+						</div>
+
+					</div>
+					<!-- ***************************************************************************************************************** -->
+					<!-- ****************************************Coupon Table Headers************************************************ -->
+
+					<div class="tableheader" id="tblhead" style="display: none;">
+						<h3 id="tblexist" style="display: none;">Existing Coupons</h3>
+						<h3 id="tbltype" style="display: none;">Existing Coupons By
+							Type</h3>
+						<h3 id="tbldate" style="display: none;">Existing Coupons By
+							Date</h3>
+						<h3 id="tblprice" style="display: none;">Existing Coupons By
+							Price</h3>
+						<h3 id="tblavilable" style="display: none;">Available Coupons</h3>
+						<h3 id="tblavilabletype" style="display: none;">Available
+							Coupons By Type</h3>
+						<h3 id="tblavilableprice" style="display: none;">Available
+							Coupons By Price</h3>
+					</div>
+					<!--****************************************************Coupon Table***************************************  -->
+					<div id="table" style="display: none;" class="tableheader">
+						<table class="detailsTable">
+							<thead>
+								<tr>
+									<th id="id">ID</th>
+									<th id="title">Title</th>
+									<th id="startDate">Start Date</th>
+									<th id="endDate">End Date</th>
+									<th id="amount">Amount</th>
+									<th id="type">Type</th>
+									<th id="message">Message</th>
+									<th id="price">Price</th>
+									<th id="image">Image</th>
+								</tr>
+							</thead>
+							<tbody id="tableCoupons">
+
+							</tbody>
+						</table>
+					</div>
+					<!-- ************************************************************************************************************* -->
+
+					<!-- *********************************************Admin******************************************************** -->
+
+					<!-- ------------------------------------Table Company------------------------------------- -->
+					<div id=tblcomp style="display: none;">
+						<p align="center">
+						<h3 class="tableheader">Existing Companies</h3>
+						</p>
+						<table id="table" class="ditailsTable">
+							<thead>
+								<tr>
+									<th id="id">ID</th>
+									<th id="comp_name">Company</th>
+									<th id="password">Password</th>
+									<th id="email">E-Mail</th>
+								</tr>
+							</thead>
+							<tbody id="tableCompany">
+
+							</tbody>
+						</table>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------- -->
+
+					<!-- -------------------------------Table Customer------------------------------------------ -->
+					<div id=tblcust style="display: none;">
+						<p align="center">
+						<h3 class="tableheader">Existing Customers</h3>
+						</p>
+						<table class="ditailsTable">
+							<thead>
+								<tr>
+									<th id="id">ID</th>
+									<th id="cust_name">Company</th>
+									<th id="cust_password">Password</th>
+								</tr>
+							</thead>
+							<tbody id="tableCustomer">
+
+							</tbody>
+						</table>
+					</div>
+
+					<!-- ------------------------------------------------------------------------- -->
+
+					<!-- ----------------------------------Create Company---------------------------------------- -->
+					<div id="admincomp" style="display: none;">
+						<form id="addcompForm" class="addcomp">
+							<h1 class="tableheader">Create Company</h1>
+							<span> <input type="text" name="compName" value=""
+								placeholder="Name"> <input type="password"
+								name="password" value="" placeholder="Password"> <input
+								type="email" name="email" value="" placeholder="e-mail">
+								<input class="submit" id="btncreatecomp" type="button"
+								value="Create" onclick="createComp()">
+							</span>
+						</form>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------------- -->
+
+					<!-- ----------------------------------Update Company---------------------------------------- -->
+					<div id="admincompupd" style="display: none;">
+						<form id="updcompForm" class="updcomp">
+							<h1 class="tableheader">Update Company</h1>
+							<span> <input type="hidden" id="updcompForm_id" name="id"
+								value=""> <input type="text" id="updcompForm_password"
+								name="password" value=""> <input id="updcompForm_email"
+								type="text" name="email" value=""> <input class="submit"
+								id="btnupdatecomp" type="button" value="Update"
+								onclick="updateCompany()">
+							</span>
+						</form>
+					</div>
+
+					<!-- --------------------------------------------------------------------------------------------- -->
+
+					<!-- ----------------------------------Update Customer---------------------------------------- -->
+					<div id="admincustupd" style="display: none;">
+						<form id="updcustForm" class="updust">
+							<h1 class="tableheader">Update Customer</h1>
+							<span> <input type="hidden" id="updcustForm_id" name="id"
+								value=""> <input type="text" id="updcustForm_password"
+								name="password" value=""> <input class="submit"
+								id="btnupdatecust" type="button" value="Update"
+								onclick="updateCustomer()">
+							</span>
+						</form>
+					</div>
+
+					<!-- ------------------------------------------------------------------------------------------------ -->
+
+					<!-- -----------------------------Create Customer------------------------------------- -->
+					<div id="admincust" style="display: none;">
+						<form id="addcustForm" class="addcomp">
+							<h1 class="tableheader">Create Customer</h1>
+							<span> <input type="text" name="custName" value=""
+								placeholder="Name"> <input type="password"
+								name="password" value="" placeholder="Password"> <input
+								class="submit" id="btncreatecomp" type="button" value="Create"
+								onclick="createCustomer()">
+							</span>
+						</form>
+					</div>
+
+					<!-- -------------------------------------------------------------------------------------------- -->
+
+					<!-- ***************************************************Company************************************************ -->
+
+					<!-- ------------------------- Coupons by Type--------------------------- -->
+					<div id="selecttype" style="display: none">
+						<p>
+						<h3 class="tableheader">Select Type</h3>
+						</p>
+						<form id="typeForm">
+							<select name="type">
+								<option selected disabled>Choose</option>
+								<option value="RESTAURANT">Restaurants</option>
+								<option value="ELECTRICITY">Electricity</option>
+								<option value="FOOD">Food</option>
+								<option value="HEALTH">Health</option>
+								<option value="SPORTS">Sports</option>
+								<option value="CAMPING">Camping</option>
+								<option value="TRAVELLING">Traveling</option>
+							</select>
+							<p>
+								<input id="selecttypebtn" type="button" value="Submit"
+									onclick="getCouponsByType()">
+							</p>
+						</form>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------- -->
+
+					<!-- -------------------------Table Coupons by Date--------------------------- -->
+
+					<div id="selectdate" style="display: none">
+						<p>
+						<h3 class="tableheader">Select Date</h3>
+						</p>
+						<form id="dateForm">
+							<input type="date" name="coupend" value="" placeholder="End Date">
+
+							<input id="selectdatebtn" type="button" value="Submit"
+								onclick="getCouponsByDate()">
+						</form>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------- -->
+
+					<!-- -------------------------Table Coupons by Price--------------------------- -->
+
+					<div id="selectprice" style="display: none">
+						<p>
+						<h3 class="tableheader">Select Price</h3>
+						</p>
+						<form id="priceForm">
+							<input type="number" name="coupprice" value=""
+								placeholder="Price"> <input id="selectpricebtn"
+								type="button" value="Submit" onclick="getCouponsByPrice()">
+						</form>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------- -->
+
+					<!-- -------------------------Create Coupon-------------------------- -->
+					<div id="createcoup" style="display: none;">
+						<form id="addcoupForm" class="addcoup">
+							<h1 class="tableheader">Create Coupon</h1>
+							<p>
+								<span> <input type="text" name="title" value=""
+									placeholder="Title"> <select name="type">
+										<option selected disabled>Choose</option>
+										<option value="RESTAURANT">Restaurants</option>
+										<option value="ELECTRICITY">Electricity</option>
+										<option value="FOOD">Food</option>
+										<option value="HEALTH">Health</option>
+										<option value="SPORTS">Sports</option>
+										<option value="CAMPING">Camping</option>
+										<option value="TRAVELLING">Traveling</option>
+								</select></span>
+							</p>
+							<p>
+								<span> <input type="date" name="startDate" value=""
+									placeholder="Start Date"> <input type="date"
+									name="endDate" value="" placeholder="End Date"> </apan>
+							</p>
+							<p>
+								<span> <input type="number" name="amount" value=""
+									placeholder="Amount"> <input type="text" name="message"
+									value="" placeholder="Message">
+								</span>
+							</p>
+							<p>
+								<span> <input type="number" name="price" value=""
+									placeholder="Price"> <input type="text" name="image"
+									value="" placeholder="Image">
+								</span>
+							</p>
+						</form>
+						<p>
+							<span> <input class="submit" id="btncreatecomp"
+								type="button" value="Create" onclick="createCouponForm()">
+							</span>
+						</p>
+					</div>
+
+					<!-- ***************************************************Customer******************************************************** -->
+					<!-- -------------------------Customer Coupons by Type--------------------------- -->
+					<div id="selecttypecust" style="display: none">
+						<p>
+						<h3 class="tableheader">Select Type</h3>
+						</p>
+						<form id="typeCustForm">
+							<select name="type">
+								<option selected disabled>Choose</option>
+								<option value="RESTAURANT">Restaurants</option>
+								<option value="ELECTRICITY">Electricity</option>
+								<option value="FOOD">Food</option>
+								<option value="HEALTH">Health</option>
+								<option value="SPORTS">Sports</option>
+								<option value="CAMPING">Camping</option>
+								<option value="TRAVELLING">Traveling</option>
+							</select>
+							<p>
+								<input id="selecttypebtn" type="button" value="Submit"
+									onclick="getCouponsByTypeCust()">
+							</p>
+						</form>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------- -->
+
+					<!-- -------------------------Customer Table Coupons by Price--------------------------- -->
+
+					<div id="selectpricecust" style="display: none">
+						<p>
+						<h3 class="tableheader">Select Price</h3>
+						</p>
+						<form id="priceCustForm">
+							<input type="number" name="coupprice" value=""
+								placeholder="Price"> <input id="selectpricebtn"
+								type="button" value="Submit" onclick="getCouponsByPriceCust()">
+						</form>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------- -->
+
+					<!-- -------------------------Available Coupons by Type--------------------------- -->
+					<div id="selecttypeavail" style="display: none">
+						<p>
+						<h3 class="tableheader">Select Type</h3>
+						</p>
+						<form id="typeAvailForm">
+							<select name="type">
+								<option selected disabled>Choose</option>
+								<option value="RESTAURANT">Restaurants</option>
+								<option value="ELECTRICITY">Electricity</option>
+								<option value="FOOD">Food</option>
+								<option value="HEALTH">Health</option>
+								<option value="SPORTS">Sports</option>
+								<option value="CAMPING">Camping</option>
+								<option value="TRAVELLING">Traveling</option>
+							</select>
+							<p>
+								<input id="selecttypebtn" type="button" value="Submit"
+									onclick="availCouponsByType()">
+							</p>
+						</form>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------- -->
+
+					<!-- -------------------------Available Table Coupons by Price--------------------------- -->
+
+					<div id="selectpriceavail" style="display: none">
+						<p>
+						<h3 class="tableheader">Select Price</h3>
+						</p>
+						<form id="priceAvailForm">
+							<input type="number" name="coupprice" value=""
+								placeholder="Price"> <input id="selectpricebtn"
+								type="button" value="Submit" onclick="availCouponsByPrice()">
+						</form>
+					</div>
+
+					<!-- ---------------------------------------------------------------------------------------- -->
+
+
+					<!-- *************************************** Main Table End*************************** -->
+				</div>
+			</td>
+
 		</tr>
+		<!-- ************************************************** Footer***************************************************** -->
 		<tr>
 			<td id="footer" colspan="2">
 				<div>
 					<footer class="footer" style="text-align: center;">
-						<div>Coupon System Project, John Bryce, 2016 &#169 Angelo</div>
+						<div>
+							<a>Coupon System Project, John Bryce, 2016 &#169 Angelo</a>
+						</div>
 					</footer>
 				</div>
 			</td>

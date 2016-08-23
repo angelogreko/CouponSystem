@@ -15,12 +15,12 @@ import com.angelo.coupons.managers.CustomerDBDAO;
  */
 
 public class CustomerFacade implements CouponClientFacade {
-	CustomerDBDAO customerDBDAO;
+	private CustomerDBDAO customerDBDAO;
 	public Customer customer;
 
-	public CustomerFacade(String name, String password) throws CouponSystemException{
+	public CustomerFacade(Customer customer) throws CouponSystemException{
 		customerDBDAO = new CustomerDBDAO();
-		this.customer = customerDBDAO.getCustomer(name, password);
+		this.customer = customer;
 	}
 
 	/**
@@ -30,11 +30,11 @@ public class CustomerFacade implements CouponClientFacade {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	public void purchaseCoupon(Coupon coupon) throws CouponSystemException{
-		customerDBDAO.purchasedCoupon(coupon, customer.getId());
+	public Coupon purchaseCoupon(Coupon coupon) throws CouponSystemException {
+		Coupon purchaseCoupon = customerDBDAO.purchaseCoupon(coupon, customer.getId());
 		customer.setCoupons(getAllPurchasedCoupon());
+		return purchaseCoupon;
 	}
-
 	/**
 	 * Getting all Purchased coupons
 	 * 
@@ -51,7 +51,7 @@ public class CustomerFacade implements CouponClientFacade {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	public Collection<Coupon> getAllPurchaseCouponByType(CouponType couponType)
+	public Collection<Coupon> getAllPurchasedCouponByType(CouponType couponType)
 			throws CouponSystemException{
 		return customerDBDAO.getAllPurchasedCouponByType(couponType, customer.getId());
 	}
@@ -67,5 +67,25 @@ public class CustomerFacade implements CouponClientFacade {
 		return customerDBDAO.getAllPurchasedCouponByPrice(maxPrice, customer.getId());
 
 	}
+
+	public Collection<Coupon> getAvailableCouponsByType(CouponType couponType)
+			throws CouponSystemException {
+		return customerDBDAO.getAvailableCouponsByType(couponType,
+				customer.getId());
+	}
+	
+	public Collection<Coupon> getAvailableCouponsByPrice(double maxPrice)
+			throws CouponSystemException {
+		return customerDBDAO.getAvailableCouponsByPrice(maxPrice,
+				customer.getId());
+	}
+	
+	public Collection<Coupon> getAvailableCoupons()
+			throws CouponSystemException {
+		return customerDBDAO.getAvailableCoupons(customer.getId());
+	}
+
+	
+
 
 }
