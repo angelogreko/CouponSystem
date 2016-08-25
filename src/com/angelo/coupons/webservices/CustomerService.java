@@ -6,7 +6,6 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -28,18 +27,20 @@ public class CustomerService {
 	public String inService() {
 		return "CustomerService";
 	}
-
-	@POST
+	
+	@GET
 	@Path("purchaseCoupon")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Coupon purchaseCoupon(Coupon coupon) throws CouponSystemException {
-		System.out.println("purchaseCoupon:" + coupon.toString());
+	public Coupon purchaseCoupon(@QueryParam ("id") long id) throws CouponSystemException {
+//		System.out.println("purchaseCoupon:" + coupon.toString());
 		if (request.getSession().getAttribute("facade") != null) {
+			
 			CustomerFacade customerFacade = (CustomerFacade) request.getSession().getAttribute("facade");
+			Coupon thisCoupon = customerFacade.getCoupon(id);
 			System.out.println(customerFacade);
 			Coupon createdCoupon = new Coupon();
-			createdCoupon = customerFacade.purchaseCoupon(coupon);
+			createdCoupon = customerFacade.purchaseCoupon(thisCoupon);
 			return createdCoupon;
 		}
 		return null;
@@ -62,10 +63,10 @@ public class CustomerService {
 	}
 
 	@GET
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("getPurchasedCouponsByPrice")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Coupon> getPurchasedCouponsByPrice(@QueryParam("maxPrice") Double maxPrice) throws CouponSystemException {
+	public Collection<Coupon> getPurchasedCouponsByPrice(@QueryParam("coupprice") Double maxPrice) throws CouponSystemException {
 		System.out.println("getPurchasedCouponsByPrice");
 		System.out.println(maxPrice);
 		if (request.getSession().getAttribute("facade") != null) {
@@ -80,10 +81,10 @@ public class CustomerService {
 
 	@SuppressWarnings("finally")
 	@GET
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("getPurchasedCouponsByCouponType")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Coupon> getPurchasedCouponsByCouponType(@QueryParam("couponType") CouponType couponType) {
+	public Collection<Coupon> getPurchasedCouponsByCouponType(@QueryParam("type") CouponType couponType) {
 		System.out.println("getPurchasedCouponsByCouponType");
 		System.out.println(couponType);
 		if (request.getSession().getAttribute("facade") != null) {
@@ -104,6 +105,7 @@ public class CustomerService {
 
 	@SuppressWarnings("finally")
 	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("getAvailableCoupons")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Coupon> getAvailableCoupons() {
@@ -125,10 +127,10 @@ public class CustomerService {
 
 	@SuppressWarnings("finally")
 	@GET
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("getAvailableCouponsByPrice")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Coupon> getAvailableCouponsByPrice(@QueryParam("maxPrice") Double maxPrice) {
+	public Collection<Coupon> getAvailableCouponsByPrice(@QueryParam("coupprice") Double maxPrice) {
 		System.out.println("getAvailableCouponsByPrice");
 		System.out.println(maxPrice);
 		if (request.getSession().getAttribute("facade") != null) {
@@ -148,10 +150,10 @@ public class CustomerService {
 
 	@SuppressWarnings("finally")
 	@GET
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("getAvailableCouponsByType")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Coupon> getAvailableCouponsByType(@QueryParam("couponType") CouponType couponType) {
+	public Collection<Coupon> getAvailableCouponsByType(@QueryParam("type") CouponType couponType) {
 		System.out.println("getAvailableCouponsByType");
 		System.out.println(couponType);
 		if (request.getSession().getAttribute("facade") != null) {

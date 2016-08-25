@@ -20,7 +20,7 @@ import com.angelo.coupons.utils.UtilDBDAO;
 
 public class CouponDBDAO implements CouponDAO {
 	private final UtilDBDAO getUtilFunction;
-
+	
 	public CouponDBDAO() throws CouponSystemException {
 		getUtilFunction = new UtilDBDAO();
 	}

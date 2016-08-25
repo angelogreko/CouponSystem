@@ -26,7 +26,7 @@ public class CompanyDBDAO implements CompanyDAO {
 	public CompanyDBDAO() throws CouponSystemException {
 		getUtilFunction = new UtilDBDAO();
 	}
-
+	
 	/**
 	 * Creating a new Company & Checking for duplications in company names.
 	 * 

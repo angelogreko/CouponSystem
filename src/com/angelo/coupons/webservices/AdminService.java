@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -18,7 +19,7 @@ import com.angelo.coupons.facades.AdminFacade;
 
 @Path("/AdminService")
 public class AdminService {
-
+	
 	@Context
 	HttpServletRequest request;
 
@@ -129,6 +130,7 @@ public class AdminService {
 	@SuppressWarnings("finally")
 	@Path("updateCompany")
 	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Company> updateCompany(@QueryParam("id") long id, @QueryParam("password") String password,
 			@QueryParam("email") String email) throws CouponSystemException {
@@ -149,6 +151,7 @@ public class AdminService {
 	@SuppressWarnings("finally")
 	@Path("updateCustomer")
 	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Customer> updateCustomer(@QueryParam("id") long id, @QueryParam("password") String password)
 			throws CouponSystemException {
@@ -168,6 +171,7 @@ public class AdminService {
 	@SuppressWarnings("finally")
 	@Path("removeCustomer")
 	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Customer> removeCustomer(@QueryParam("id") long id) throws CouponSystemException {
 		System.out.println("remove with id " + id);

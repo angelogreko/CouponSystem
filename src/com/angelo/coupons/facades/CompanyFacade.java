@@ -98,8 +98,8 @@ public class CompanyFacade implements CouponClientFacade {
 	 * @throws CouponSystemException
 	 * @throws CouponSystemException
 	 */
-	public Collection<Coupon> getCouponsByType(CouponType couponType) throws CouponSystemException{
-		return companyDBDAO.getCouponsByType(couponType, company.getId());
+	public Collection<Coupon> getCouponsByType(CouponType type) throws CouponSystemException{
+		return companyDBDAO.getCouponsByType(type, company.getId());
 	}
 
 	/**

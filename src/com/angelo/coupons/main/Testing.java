@@ -28,7 +28,7 @@ public class Testing {
 			System.out.println(c.toString());
 		}
 	}
-
+	
 	private static void printListCustomers(Collection<Customer> list) {
 		for (Customer c : list) {
 			System.out.println(c.toString());

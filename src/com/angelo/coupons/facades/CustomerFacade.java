@@ -7,6 +7,7 @@ import com.angelo.coupons.beans.Customer;
 import com.angelo.coupons.enums.CouponType;
 import com.angelo.coupons.exceptions.CouponSystemException;
 import com.angelo.coupons.interfaces.CouponClientFacade;
+import com.angelo.coupons.managers.CouponDBDAO;
 import com.angelo.coupons.managers.CustomerDBDAO;
 
 /*
@@ -85,7 +86,16 @@ public class CustomerFacade implements CouponClientFacade {
 		return customerDBDAO.getAvailableCoupons(customer.getId());
 	}
 
-	
+	public Coupon getCoupon(long id){
+		Coupon thisCoupon = null;
+		try {
+			CouponDBDAO couponManager = new CouponDBDAO();
+			thisCoupon = couponManager.getCoupon(id);
+		} catch (CouponSystemException e) {
+			e.printStackTrace();
+		}
+		return thisCoupon;
+	}
 
 
 }

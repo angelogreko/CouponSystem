@@ -1,7 +1,6 @@
 //------------------------------------------------------------log in
 function logIn() {
 	var formField = getFormFields('loginForm');
-	document.getElementById("loginbtn").disabled = true;
 	sendFormLogin(formField);
 }
 
@@ -30,10 +29,11 @@ function sendFormLogin(formFields) {
 }
 
 function processResponse(jsonObj) {
-	if (jsonObj != null) {
+alert(jsonObj);
+	if (jsonObj != null && jsonObj.name != undefined) {
+		document.getElementById('statlogin').innerHtml = "Loading...";
 		jsonObj.name
 		jsonObj.password
-
 		jsonObj.clienType
 		switch (jsonObj.clienType) {
 		case "ADMIN":
@@ -56,7 +56,38 @@ function processResponse(jsonObj) {
 			document.getElementById('customer_user_name').innerText = jsonObj.name;
 			break;
 		}
+	} else {
+		alert("error");
+		document.getElementById('statlogin').innerHtml = "Wrong Information... Please Log In Again";
 	}
+}
+
+function clearPage() {
+	document.getElementById('admincomp').style.display = "none";
+	document.getElementById('admincust').style.display = "none";
+	document.getElementById('tblcust').style.display = "none";
+	document.getElementById('tblhead').style.display = "none";
+	document.getElementById('tblcomp').style.display = "none";
+	document.getElementById('admincomp').style.display = "none";
+	document.getElementById('admincompupd').style.display = "none";
+	document.getElementById('admincustupd').style.display = "none";
+	document.getElementById('selecttype').style.display = "none";
+	document.getElementById('selectdate').style.display = "none";
+	document.getElementById('selectprice').style.display = "none";
+	document.getElementById('createcoup').style.display = "none";
+	document.getElementById('selecttypecust').style.display = "none";
+	document.getElementById('selectpricecust').style.display = "none";
+	document.getElementById('selecttypeavail').style.display = "none";
+	document.getElementById('selectpriceavail').style.display = "none";
+	document.getElementById('tableCoupons').style.display = "none";
+	document.getElementById('tblexist').style.display = "none";
+	document.getElementById('tbltype').style.display = "none";
+	document.getElementById('tbldate').style.display = "none";
+	document.getElementById('tblprice').style.display = "none";
+	document.getElementById('tblavilable').style.display = "none";
+	document.getElementById('tblavilabletype').style.display = "none";
+	document.getElementById('tblavilableprice').style.display = "none";
+
 }
 
 // -------------------------------------------------------------------Admin
@@ -76,9 +107,7 @@ function existingcomp() {
 }
 
 function processExistingComp(jsonObj) {
-	document.getElementById('admincomp').style.display = "none";
-	document.getElementById('admincust').style.display = "none";
-	document.getElementById('tblcust').style.display = "none";
+
 	var buff = '';
 	if (jsonObj != null) {
 
@@ -100,8 +129,10 @@ function processExistingComp(jsonObj) {
 		}
 	} else {
 		alert("No existing companies");
+		document.getElementById('tblcomp').style.display = "none";
 	}
 	document.getElementById('tableCompany').innerHTML = buff;
+	clearPage()
 	document.getElementById('tblcomp').style.display = "block";
 
 }
@@ -123,13 +154,14 @@ function removeCompany(comp_id) {
 }
 
 function showUpdateComp(id, password, email) {
+	clearPage();
 	document.getElementById('admincompupd').style.display = "block";
 	document.getElementById('updcompForm_id').value = id;
 	document.getElementById('updcompForm_password').value = password;
 	document.getElementById('updcompForm_email').value = email;
 }
 
-function updateCompany() {
+function updateCompany(id) {
 	var formField = getFormFields('updcompForm');
 	sendUpdateCompany(formField);
 }
@@ -151,9 +183,7 @@ function sendUpdateCompany(formFields) {
 }
 
 function showcreatecomp() {
-	document.getElementById('admincust').style.display = "none";
-	document.getElementById('tblcomp').style.display = "none";
-	document.getElementById('tblcust').style.display = "none";
+	clearPage();
 	document.getElementById('admincomp').style.display = "block";
 }
 
@@ -172,11 +202,8 @@ function sendFormCreateComp(formFields) {
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
 			alert("Company Successfully Added");
-			document.getElementById('admincust').style.display = "none";
-			document.getElementById('tblcust').style.display = "none";
-			document.getElementById('admincomp').style.display = "none";
+			clearPage();
 			existingcomp();
-			document.getElementById('tblcomp').style.display = "block";
 		}
 	};
 	AJAX.send(formFields);
@@ -197,9 +224,6 @@ function existingcust() {
 }
 
 function processExistingCust(jsonObj) {
-	document.getElementById('admincust').style.display = "none";
-	document.getElementById('tblcomp').style.display = "none";
-	document.getElementById('admincomp').style.display = "none";
 	if (jsonObj != null) {
 		var buff = '';
 		for (var i = 0; i < jsonObj.customer.length; i++) {
@@ -221,6 +245,7 @@ function processExistingCust(jsonObj) {
 			alert("No Existing Customers")
 		}
 		document.getElementById('tableCustomer').innerHTML = buff;
+		clearPage();
 		document.getElementById('tblcust').style.display = "block";
 	}
 }
@@ -243,6 +268,7 @@ function removeCustomer(id) {
 }
 
 function showUpdateCust(id, password) {
+	clearPage();
 	document.getElementById('admincustupd').style.display = "block";
 	document.getElementById('updcustForm_id').value = id;
 	document.getElementById('updcustForm_password').value = password;
@@ -263,17 +289,15 @@ function sendUpdateCustomer(formFields) {
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
 			alert("Customer Updated Successfully")
+			clearPage();
 			existingcomp()
-			document.getElementById('admincustupd').style.display = "none";
 		}
 	};
 	AJAX.send();
 }
 
 function showcreatecust() {
-	document.getElementById('tblcomp').style.display = 'none';
-	document.getElementById('tblcust').style.display = 'none';
-	document.getElementById('admincomp').style.display = 'none';
+	clearPage();
 	document.getElementById('admincust').style.display = 'block';
 }
 
@@ -293,8 +317,8 @@ function sendFormCreatecust(formFields) {
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
 			alert("Customer Successfully Added")
+			clearPage();
 			existingcust()
-			document.getElementById('tblcust').style.display = 'none';
 		}
 	};
 	AJAX.send(formFields);
@@ -302,43 +326,64 @@ function sendFormCreatecust(formFields) {
 
 // ------------------------------------------------------------------Company
 
-function processCoup(jsonObj) {
+
+
+function processCoup(jsonObj, isNotCust, purshace) {
 	var buff = '';
 	if (jsonObj != null) {
+		var buff = '';
+		buff += '<table id=couponTabl><tr><th>Id</th><th>Title</th><th>Type</th><th>Amount</th><th>Start Date</th><th>End Date</th><th>Message</th><th>Price</th><th>Image</th>';
+		if (isNotCust) {
+			buff += '<th></th>';
+		}
 
-		for (var i = 0; i < jsonObj.coupon.length; i++) {
-			var coupitem = jsonObj.coupon[i];
-			buff += '<tr>';
-			buff += '<td>' + coupitem.id + '</td>';
-			buff += '<td>' + coupitem.title + '</td>';
-			buff += '<td>' + coupitem.startDate + '</td>';
-			buff += '<td>' + coupitem.endDate + '</td>';
-			buff += '<td>' + coupitem.amount + '</td>';
-			buff += '<td>' + coupitem.type + '</td>';
-			buff += '<td>' + coupitem.message + '</td>';
-			buff += '<td>' + coupitem.price + '</td>';
-			buff += '<td>' + coupitem.image + '</td>';
-new Date()
-			buff += '<td id="removecoup" style="display: none;"><button onClick="removeCoupon('
-					+ coupitem.id + ')">Delete</button>' + '</td>';
-			buff += '<td id="updatecoup" style="display: none;"><button onClick="updateCoupon('
-					+ coupitem.id
-					+ ', '
-					+ coupitem.endDate
-					+ ', '
-					+ coupitem.price
-					+ ', '
-					+ coupitem.amount
-					+ '   )">Update</button>' + '</td>';
-			buff += '<td id="purchasecoup" style="display: none;"><button onClick="purchaseCoupon('
-					+ coupitem.id + ')">Purchase</button>' + '</td>';
+		buff += '</tr>';
+		var coupons;
+		if (jsonObj != null) {
+			if (jsonObj.coupon.length) {
+				coupons = jsonObj.coupon;
+			} else {
+				coupons = [];
+				coupons.push(jsonObj.coupon);
 
+			}
+			for (var i = 0; i < coupons.length; i++) {
+				var coupitem = coupons[i];
+				buff += '<tr>';
+				buff += '<td>' + coupitem.id + '</td>';
+				buff += '<td>' + coupitem.title + '</td>';
+				buff += '<td>' + coupitem.type + '</td>';
+				buff += '<td>' + coupitem.amount + '</td>';
+				buff += '<td>'
+						+ new Date(coupitem.startDate).toLocaleDateString()
+						+ '</td>';
+				buff += '<td>'
+						+ new Date(coupitem.endDate).toLocaleDateString()
+						+ '</td>';
+				buff += '<td>' + coupitem.message + '</td>';
+				buff += '<td>' + coupitem.price + '</td>';
+				buff += '<td>' + coupitem.image + '</td>';
+				if (isNotCust) {
+					buff += '<td><div class="updatecoup"><button onClick="updateCoupon('
+							+ coupitem.id
+							+ ', '
+							+ coupitem.endDate
+							+ ', '
+							+ coupitem.price
+							+ ', '
+							+ coupitem.amount
+							+ ' )">Update</button></div></td><td></td><td><div class="removecoup"><button onClick="removeCoupon('
+							+ coupitem.id + ')">Delete</button></div></td>';
+				}else if(purshace){
+					buff += '<td><div class="purchasecoup"><button onClick="purchaseCoupon('
+							+ coupitem.id + ')">Purchase</button></div></td>';
+				}
+			}
 			buff += '</tr>';
 		}
-	} else {
-		alert("No Existing Coupons");
+
+		document.getElementById('tableCoupons').innerHTML = buff;
 	}
-	document.getElementById('tableCoupons').innerHTML = buff;
 }
 
 function existingcoup() {
@@ -349,28 +394,20 @@ function existingcoup() {
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response, true, null);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tblexist').style.display = "block";
-			document.getElementById('table').style.display = "table";
+			document.getElementById('table').style.display = "block";
 			document.getElementById('tableCoupons').style.display = "block";
-			document.getElementById('removecoup').style.display = "block";
-			document.getElementById('updatecoup').style.display = "block";
-			document.getElementById('createcoup').style.display = "none";
-			document.getElementById('selectprice').style.display = "none";
-			document.getElementById('selectdate').style.display = "none";
-			document.getElementById('selecttype').style.display = "none";
 		}
 	};
 	AJAX.send(null);
 }
 
 function showcreateCoupon() {
+	clearPage();
 	document.getElementById('createcoup').style.display = "block";
-	document.getElementById('tblhead').style.display = "none";
-	document.getElementById('selectprice').style.display = "none";
-	document.getElementById('selectdate').style.display = "none";
-	document.getElementById('selecttype').style.display = "none";
 }
 
 function createCouponForm() {
@@ -389,20 +426,12 @@ function sendFormCreateCoupon(formFields) {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
 			// processCouponResponse(AJAX.response);
 			alert("Coupon Created Successfuly")
+			clearPage();
 			existingcoup();
 		}
 	};
 	AJAX.send(formFields);
 }
-
-// function processCouponResponse(jsonObj) {
-// if (jsonObj != null) {
-// alert("Coupon Created Successfuly")
-// existingcoup()
-// } else {
-// alert("Coupon Was Not Created Successfuly")
-// }
-// }
 
 function removeCoupon(id) {
 
@@ -415,13 +444,15 @@ function removeCoupon(id) {
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
 			alert("Coupon Removed Successfully")
+			clearPage();
 			existingcoup()
 		}
 	};
-	AJAX.send();
+	AJAX.send(id);
 }
 
 function showUpdateCoup(id, endDate, price, amount) {
+	clearPage();
 	document.getElementById('admincustupd').style.display = "block";
 	document.getElementById('coupForm_id').value = id;
 	document.getElementById('coupForm_endDate').value = endDate;
@@ -444,17 +475,14 @@ function sendUpdateCoupon(formFields) {
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
 			alert("Customer Updated Successfully")
+			clearPage();
 			existingcomp()
-			document.getElementById('admincustupd').style.display = "none";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 function showgetCouponsByType() {
-	document.getElementById('createcoup').style.display = "none";
-	document.getElementById('tblhead').style.display = "none";
-	document.getElementById('selectprice').style.display = "none";
-	document.getElementById('selectdate').style.display = "none";
+	clearPage();
 	document.getElementById('selecttype').style.display = "block";
 }
 
@@ -463,32 +491,29 @@ function getCouponsByType() {
 	sendGetCouponsByType(formField);
 }
 
-function sendGetCouponsByType() {
-	var url = 'http://localhost:8080/angelocouponapp/rest/CompanyService/getCouponsByType'
+function sendGetCouponsByType(formFields) {
+	var url = 'http://localhost:8080/angelocouponapp/rest/CompanyService/getCouponsByType?'
+			+ formFields;
 	var AJAX = new XMLHttpRequest();
 	AJAX.responseType = "json";
 	AJAX.open("GET", url, true);
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response, true, null);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tbltype').style.display = "block";
 			document.getElementById('table').style.display = "table";
 			document.getElementById('tableCoupons').style.display = "block";
-			document.getElementById('removecoup').style.display = "block";
-			document.getElementById('updatecoup').style.display = "block";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 
 function showgetCouponsByPrice() {
-	document.getElementById('createcoup').style.display = "none";
-	document.getElementById('tblhead').style.display = "none";
+	clearPage();
 	document.getElementById('selectprice').style.display = "block";
-	document.getElementById('selectdate').style.display = "none";
-	document.getElementById('selecttype').style.display = "none";
 }
 
 function getCouponsByPrice() {
@@ -496,32 +521,29 @@ function getCouponsByPrice() {
 	sendGetCouponsByPrice(formField);
 }
 
-function sendGetCouponsByPrice() {
-	var url = 'http://localhost:8080/angelocouponapp/rest/CompanyService/getCouponsByPrice'
+function sendGetCouponsByPrice(formField) {
+	var url = 'http://localhost:8080/angelocouponapp/rest/CompanyService/getCouponsByPrice?'
+			+ formField;
 	var AJAX = new XMLHttpRequest();
 	AJAX.responseType = "json";
 	AJAX.open("GET", url, true);
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response,true, null);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tblprice').style.display = "block";
-			document.getElementById('table').style.display = "table";
+			document.getElementById('table').style.display = "block";
 			document.getElementById('tableCoupons').style.display = "block";
-			document.getElementById('removecoup').style.display = "block";
-			document.getElementById('updatecoup').style.display = "block";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 
 function showgetCouponsByDate() {
+	clearPage();
 	document.getElementById('selectdate').style.display = "block";
-	document.getElementById('selecttype').style.display = "none";
-	document.getElementById('selectprice').style.display = "none";
-	document.getElementById('tblhead').style.display = "none";
-	document.getElementById('table').style.display = "none";
 }
 
 function getCouponsByDate() {
@@ -529,24 +551,24 @@ function getCouponsByDate() {
 	sendGetCouponsByDate(formField);
 }
 
-function sendGetCouponsByDate() {
-	var url = 'http://localhost:8080/angelocouponapp/rest/CompanyService/getCouponsByDate'
+function sendGetCouponsByDate(formField) {
+	var url = 'http://localhost:8080/angelocouponapp/rest/CompanyService/getCouponsByDate?'
+			+ formField;
 	var AJAX = new XMLHttpRequest();
 	AJAX.responseType = "json";
 	AJAX.open("GET", url, true);
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response, true, null);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tbldate').style.display = "block";
-			document.getElementById('table').style.display = "table";
+			document.getElementById('table').style.display = "block";
 			document.getElementById('tableCoupons').style.display = "block";
-			document.getElementById('removecoup').style.display = "block";
-			document.getElementById('updatecoup').style.display = "block";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 
 // ---------------------------------------------------------Customer
@@ -559,76 +581,71 @@ function existingcoupcust() {
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response, false, false);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tblexist').style.display = "block";
-			document.getElementById('table').style.display = "table";
+			document.getElementById('table').style.display = "block";
 			document.getElementById('tableCoupons').style.display = "block";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 
 function showgetCouponsByPriceCust() {
+	clearPage();
 	document.getElementById('selectpricecust').style.display = "block";
-	document.getElementById('selecttypecust').style.display = "none";
-	document.getElementById('selecttypeavail').style.display = "none";
-	document.getElementById('selectpriceavail').style.display = "none";
-	document.getElementById('tblhead').style.display = "none";
-	document.getElementById('table').style.display = "none";
 }
 
 function getCouponsByPriceCust() {
 	var formField = getFormFields('priceCustForm');
 	sendGetCouponsByPriceCust(formField);
 }
-function sendGetCouponsByPriceCust() {
-	var url = 'http://localhost:8080/angelocouponapp/rest/CustomerService/getPurchasedCouponsByPrice'
+function sendGetCouponsByPriceCust(formField) {
+	var url = 'http://localhost:8080/angelocouponapp/rest/CustomerService/getPurchasedCouponsByPrice?'
+			+ formField;
 	var AJAX = new XMLHttpRequest();
 	AJAX.responseType = "json";
 	AJAX.open("GET", url, true);
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response,false, false);
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tblprice').style.display = "block";
-			document.getElementById('table').style.display = "table";
+			document.getElementById('table').style.display = "block";
 			document.getElementById('tableCoupons').style.display = "block";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 
 function showgetCouponsByTypeCust() {
+	clearPage();
 	document.getElementById('selecttypecust').style.display = "block";
-	document.getElementById('selectpricecust').style.display = "none";
-	document.getElementById('selecttypeavail').style.display = "none";
-	document.getElementById('selectpriceavail').style.display = "none";
-	document.getElementById('tblhead').style.display = "none";
-	document.getElementById('table').style.display = "none";
-
 }
 function getCouponsByTypeCust() {
 	var formField = getFormFields('typeCustForm');
 	sendGetCouponsByTypeCust(formField);
 }
-function sendGetCouponsByTypeCust() {
-	var url = 'http://localhost:8080/angelocouponapp/rest/CustomerService/getPurchasedCouponsByCouponType'
+function sendGetCouponsByTypeCust(formField) {
+	var url = 'http://localhost:8080/angelocouponapp/rest/CustomerService/getPurchasedCouponsByCouponType?'
+			+ formField;
 	var AJAX = new XMLHttpRequest();
 	AJAX.responseType = "json";
 	AJAX.open("GET", url, true);
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response,false,false);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tbltype').style.display = "block";
-			document.getElementById('table').style.display = "table";
+			document.getElementById('table').style.display = "block";
 			document.getElementById('tableCoupons').style.display = "block";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 
 function purchaseCoupon(id) {
@@ -642,6 +659,7 @@ function purchaseCoupon(id) {
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
 			alert("Coupon Purchased Successfully")
+			clearPage();
 		}
 	};
 	AJAX.send();
@@ -655,106 +673,72 @@ function availableCoupons() {
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response,false,true);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tblavilable').style.display = "block";
-			document.getElementById('table').style.display = "table";
+			document.getElementById('table').style.display = "block";
 			document.getElementById('tableCoupons').style.display = "block";
-			document.getElementById('purchasecoup').style.display = "block";
-			document.getElementById('selectpriceavail').style.display = "none";
-			document.getElementById('selecttypeavail').style.display = "none";
-			document.getElementById('selecttypecust').style.display = "none";
-			document.getElementById('selectpricecust').style.display = "none";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 
-function showAvailCouponsByPrice() {
+function showAvailableCouponsByPrice() {
+	clearPage();
 	document.getElementById('selectpriceavail').style.display = "block";
-	document.getElementById('selecttypeavail').style.display = "none";
-	document.getElementById('selecttypecust').style.display = "none";
-	document.getElementById('selectpricecust').style.display = "none";
-	document.getElementById('tblhead').style.display = "none";
-	document.getElementById('table').style.display = "none";
 
 }
-function availCouponsByPrice() {
+function availCouponsByPrice(formField) {
 	var formField = getFormFields('priceAvailForm');
 	sendAvailCouponsByPrice(formField);
 }
-function sendAvailCouponsByPrice() {
-	var url = 'http://localhost:8080/angelocouponapp/rest/CustomerService/getAvailableCouponsByPrice'
+function sendAvailCouponsByPrice(formField) {
+	var url = 'http://localhost:8080/angelocouponapp/rest/CustomerService/getAvailableCouponsByPrice?'
+			+ formField
 	var AJAX = new XMLHttpRequest();
 	AJAX.responseType = "json";
 	AJAX.open("GET", url, true);
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response,false,true);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tblavilableprice').style.display = "block";
-			document.getElementById('table').style.display = "table";
+			document.getElementById('table').style.display = "block";
 			document.getElementById('tableCoupons').style.display = "block";
-			document.getElementById('purchasecoup').style.display = "block";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
 
 function showAvailableCouponsByType() {
+	clearPage();
 	document.getElementById('selecttypeavail').style.display = "block";
-	document.getElementById('selectpriceavail').style.display = "none";
-	document.getElementById('selecttypecust').style.display = "none";
-	document.getElementById('selectpricecust').style.display = "none";
-	document.getElementById('tblhead').style.display = "none";
-	document.getElementById('table').style.display = "none";
-
 }
+
 function availCouponsByType() {
 	var formField = getFormFields('typeAvailForm');
 	sendAvailCouponsByType(formField);
 }
-function sendAvailCouponsByType() {
-	var url = 'http://localhost:8080/angelocouponapp/rest/CustomerService/getAvailableCouponsByType'
+
+function sendAvailCouponsByType(formField) {
+	var url = 'http://localhost:8080/angelocouponapp/rest/CustomerService/getAvailableCouponsByType?'
+			+ formField;
 	var AJAX = new XMLHttpRequest();
 	AJAX.responseType = "json";
 	AJAX.open("GET", url, true);
 	AJAX.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	AJAX.onreadystatechange = function() {
 		if (AJAX.readyState == 4 && AJAX.status == 200) {
-			processCoup(AJAX.response);
+			processCoup(AJAX.response,false,true);
+			clearPage();
 			document.getElementById('tblhead').style.display = "block";
 			document.getElementById('tblavilabletype').style.display = "block";
 			document.getElementById('table').style.display = "table";
 			document.getElementById('tableCoupons').style.display = "block";
-			document.getElementById('purchasecoup').style.display = "block";
 		}
 	};
-	AJAX.send(null);
+	AJAX.send();
 }
-
-
-//function ajaxCall(url,fun){
-//	//Creare ajax and send with url got
-//	// olace fun where he finish his job
-//	alert(url);
-//	fun();
-//}
-//
-//function callback(){
-//	// use data from server 
-//	//like get companies to table
-//	alert("I have been called");
-//}
-//
-//
-//function buttonPressed(){
-//	// when link pressed (on click)
-//	// like when user press get all companies
-//	ajaxCall("im calling do something",callback );
-//	
-//	ajaxCall("im calling do something",function(){
-//		alert("this is anonimus function ")
-//	} );
-//}

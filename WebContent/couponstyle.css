@@ -12,14 +12,15 @@ table{
 	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 10px
 		rgba(0, 0, 0, 0.24);
 }
-
 .detailsTable th,.detailsTable td{
+	/*column-width: inherit;*/
 	text-align: left;
 	font-style: italic;
 	font-family: cursive;
 	color: #4c95af;
+	padding: 7px 20px;
 }
-
+.detailsTable tr:nth-child(even) {background-color: #f1f1c4}
 #sidemenu input[type=button] {
 	background-color: #4c95af;
 	color: white;
@@ -135,10 +136,9 @@ input, select {
 	color: #4c95af
 }
 
-#statdiv{
+#statlogin{
 	color: red;
 }
-
 
 #signout{
 	float: right;

@@ -289,7 +289,7 @@ public class CustomerDBDAO implements CustomerDAO {
 		}
 		return customer;
 	}
-
+	
 	/**
 	 * Getting all coupons purchased by type
 	 * 

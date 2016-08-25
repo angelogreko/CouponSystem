@@ -5,8 +5,6 @@ import com.angelo.coupons.interfaces.CouponClientFacade;
 
 public class Main implements CouponClientFacade {
 
-
-
 	public static void main(String[] args) throws CouponSystemException, CouponSystemException {
 
 	

@@ -21,7 +21,7 @@ public class CouponSystem {
 	private ConnectionPool pool;
 	private ExpirationManager couponExpiritionTask = new ExpirationManager();
 	private Thread thread;
-
+	
 	/**
 	 * Getting a thread to activate expiration task
 	 * 
@@ -87,8 +87,9 @@ public class CouponSystem {
 						+ password);
 			break;
 		default:
-			throw new CouponSystemException("Rong clientType");
+			throw new CouponSystemException("Wrong clientType");
 		}
+		System.out.println("in lgin null");
 		return clientFacade;
 	}
 

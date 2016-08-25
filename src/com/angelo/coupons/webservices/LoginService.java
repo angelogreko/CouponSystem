@@ -28,7 +28,7 @@ public class LoginService {
 		System.out.println("logout");
 		return "LoginService";
 	}
-
+	
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
 	public String inService() {
@@ -44,6 +44,7 @@ public class LoginService {
 			@FormParam("clientType") ClientType clientType) {
 		// System.out.println("in loginservice");
 		CouponSystem couponSystem;
+		System.out.println(name+","+password+","+clientType);
 		CouponClientFacade facade = null;
 		LoginClass loginClass = new LoginClass();
 		try {
@@ -52,12 +53,15 @@ public class LoginService {
 		} catch (CouponSystemException e) {
 			e.printStackTrace();
 		} finally {
+			System.out.println("finally");
+			System.out.println("facade"+facade);
 			if (facade != null) {
 				request.getSession().setAttribute("facade", facade);
 				loginClass.setName(name);
 				loginClass.setPassword(password);
 				loginClass.setClienType(clientType);
 			}
+			System.out.println("loginClass"+loginClass);
 			return loginClass;
 		}
 	}

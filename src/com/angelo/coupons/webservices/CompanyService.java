@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -29,7 +30,7 @@ public class CompanyService {
 	public String inService() {
 		return "CompanyService";
 	}
-
+	
 	@SuppressWarnings("finally")
 	@GET
 	@Path("getAllCoupons")
@@ -76,6 +77,7 @@ public class CompanyService {
 	@SuppressWarnings("finally")
 	@GET
 	@Path("updateCoupon")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	Collection<Coupon> updateCoupon(@QueryParam("id") long id) throws CouponSystemException {
 		CompanyFacade companyFacade = (CompanyFacade) request.getSession().getAttribute("facade");
@@ -108,14 +110,15 @@ public class CompanyService {
 	@SuppressWarnings("finally")
 	@GET
 	@Path("getCouponsByType")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Coupon> getCouponsByType(@QueryParam("couponType") CouponType couponType)
+	public Collection<Coupon> getCouponsByType(@QueryParam("type") CouponType type)
 			throws CouponSystemException {
 		if (request.getSession().getAttribute("facade") != null) {
 			CompanyFacade companyFacade = (CompanyFacade) request.getSession().getAttribute("facade");
 			Collection<Coupon> coupons = new ArrayList<Coupon>();
 			try {
-				coupons = companyFacade.getCouponsByType(couponType);
+				coupons = companyFacade.getCouponsByType(type);
 			} catch (CouponSystemException e) {
 				e.printStackTrace();
 			} finally {
@@ -128,8 +131,9 @@ public class CompanyService {
 	@SuppressWarnings("finally")
 	@GET
 	@Path("getCouponsByPrice")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Collection<Coupon> getCouponsByType(@QueryParam("maxPrice") Double maxPrice) throws CouponSystemException {
+	public Collection<Coupon> getCouponsByType(@QueryParam("coupprice") Double maxPrice) throws CouponSystemException {
 		if (request.getSession().getAttribute("facade") != null) {
 			CompanyFacade companyFacade = (CompanyFacade) request.getSession().getAttribute("facade");
 			Collection<Coupon> coupons = new ArrayList<Coupon>();
@@ -148,6 +152,7 @@ public class CompanyService {
 	@SuppressWarnings("finally")
 	@GET
 	@Path("getCouponsByDate")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Coupon> getCouponsByType(@QueryParam("endDate") String endDate) throws CouponSystemException {
 		if (request.getSession().getAttribute("facade") != null) {

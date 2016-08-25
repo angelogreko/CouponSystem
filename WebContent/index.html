@@ -19,6 +19,7 @@
 		</tr>
 		<tr id="rowmain">
 			<td id="sidemenu" class="sidemenu">
+			
 				<!-- *********************************************************** Side Menu Start***************************************** -->
 				<!-- ---------------------------login menu--------------------------------------------- -->
 				<div id="loginleft" style="display: block">
@@ -41,6 +42,11 @@
 						</p>
 						<input id="loginbtn" type="button" value="Login" onclick="logIn()">
 					</form>
+					<br>
+					<div>
+						<h3 id="statlogin"></h3>
+					</div>
+
 				</div> <!-- ---------------------------------------Administrator------------------------------- -->
 				<div id="adminleft" style="display: none">
 					<div id="sidemenuheader">
@@ -121,7 +127,6 @@
 			</td>
 			<!-- ***************************************Side Menu End*************************** -->
 
-
 			<!-- ********************************************* Main Table Start*********************************************************** -->
 
 			<td id="mainwindow">
@@ -196,19 +201,7 @@
 					<!--****************************************************Coupon Table***************************************  -->
 					<div id="table" style="display: none;" class="tableheader">
 						<table class="detailsTable">
-							<thead>
-								<tr>
-									<th id="id">ID</th>
-									<th id="title">Title</th>
-									<th id="startDate">Start Date</th>
-									<th id="endDate">End Date</th>
-									<th id="amount">Amount</th>
-									<th id="type">Type</th>
-									<th id="message">Message</th>
-									<th id="price">Price</th>
-									<th id="image">Image</th>
-								</tr>
-							</thead>
+
 							<tbody id="tableCoupons">
 
 							</tbody>
@@ -223,7 +216,7 @@
 						<p align="center">
 						<h3 class="tableheader">Existing Companies</h3>
 						</p>
-						<table id="table" class="ditailsTable">
+						<table id="table" class="detailsTable">
 							<thead>
 								<tr>
 									<th id="id">ID</th>
@@ -245,7 +238,7 @@
 						<p align="center">
 						<h3 class="tableheader">Existing Customers</h3>
 						</p>
-						<table class="ditailsTable">
+						<table class="detailsTable">
 							<thead>
 								<tr>
 									<th id="id">ID</th>

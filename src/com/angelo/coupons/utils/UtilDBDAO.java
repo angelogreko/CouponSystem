@@ -27,7 +27,7 @@ public class UtilDBDAO {
 	public UtilDBDAO() throws CouponSystemException {
 		pool = ConnectionPool.getInstance();
 	}
-
+	
 	/**
 	 * Activates SQL Queries to Data Base
 	 * 

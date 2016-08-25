@@ -8,7 +8,6 @@ public class ResponceCode {
 	private int responseCode;
 	private String message;
 	
-	
 	public ResponceCode(){
 	}
 
